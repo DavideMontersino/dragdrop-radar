@@ -1,0 +1,23 @@
+{
+  "name": "icoolhunt-radar",
+  "version": "0.0.0",
+  "main": "dist/icoolhunt-radar.min.js",
+  "description": "A radar graph widget that can be used to input values too.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DavideMontersino/icoolhunt-radar.git"
+  },
+  "keywords": [],
+  "author": "Davide Orazio Montersino",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "~0.6.4",
+    "grunt-contrib-uglify": "~0.2.4",
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-qunit": "~0.3.0"
+  }
+}
