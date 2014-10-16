@@ -21,13 +21,37 @@
     <p>Check out the <a href="https://github.com/DavideMontersino/icoolhunt-radar">project repo</a>.
     <p>Copyright 2014 Davide Orazio Montersino</p>
 
+    <div id="radar-demo">
+    </div>
+    <script src="./../bower_components/d3/d3.js"></script>
     <script src="./../dist/icoolhunt-radar.js"></script>
 
     <script>
       /* begin demo script */
 
-      var n = icoolhuntRadar();
-      console.log(n);
+      var n = icoolhuntRadar({
+        width:'600',
+        height:'400',
+        element: '#radar-demo',
+        data: [
+        {value: 100, name: 'first'},
+        {value: 50, name: 'second'},
+        {value: 70, name: 'third'},
+        {value: 30, name: 'fourth'},
+        {value: 80, name: 'fifth'},
+        {value: 100, name: 'sixth'},
+        {value: 50, name: 'seventh'},
+        {value: 70, name: 'eighth'},
+        {value: 30, name: 'nineth'},
+        {value: 80, name: 'tenth'},
+        {value: 100, name: 'eleventh'},
+        {value: 50, name: 'twelth'},
+        {value: 70, name: 'thirteenth'},
+        {value: 30, name: 'fourteenth'}
+        ]
+      });
+      
+      console.log(icoolhuntRadar.getConfig());
 
       /* end demo script */
     </script>

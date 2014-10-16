@@ -14,7 +14,25 @@
 /* === modules === */
 
 /* === specific styles */
+#radar-demo{
+	border: 1px dashed #ddd;
+	min-height: 200px;
+	min-width: 400px;
+	background-color: #eee;
+}
 
+.radar-handlers{
+	fill: rgba(100,150,180,0.5);
+}
+
+.radar-handlers:hover{
+	fill: rgba(100,150,180,0.9);	
+}
+
+.radar-grid{
+	stroke-width: 1;
+  	stroke: #aaa;
+}
 /* === subsections === */
 
 /* === hacks / overrides === */
