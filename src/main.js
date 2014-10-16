@@ -68,6 +68,13 @@ icoolhuntRadar.drawRadarPath = function(svg, radarRadius, angleCalculator, coord
 		.attr("class", "radar-path");
 };
 
+icoolhuntRadar.dragmove = function(/*d*/) {
+  console.log(d3.event);
+  //d3.select(this)
+  //    .attr("cx", d.x = Math.max( d3.event.x))
+  //    .attr("cy", d.y = Math.max( d3.event.y));
+};
+
 //Draws the circles used to drag and drop values
 icoolhuntRadar.drawRadarHandlers = function(svg, radarRadius, angleCalculator, coordG, scale){
 	var dataCircles = svg.selectAll("circle")
@@ -77,9 +84,16 @@ icoolhuntRadar.drawRadarHandlers = function(svg, radarRadius, angleCalculator, c
 	.attr("r", defaultConfig.radarHandlersRadius)
 	.attr("class","radar-handlers");
 
+	var drag = d3.behavior.drag()
+	    .origin(function(d) { return d; })
+	    .on("drag", icoolhuntRadar.dragmove);
+
 	dataCircles
 		.attr("cx",function(d,i){return coordG(angleCalculator(i), scale(d.value)).x;})
-		.attr("cy",function(d,i){return coordG(angleCalculator(i), scale(d.value)).y;});
+		.attr("cy",function(d,i){return coordG(angleCalculator(i), scale(d.value)).y;})
+		.call(drag);
+
+	
 };
 
 icoolhuntRadar.equalAngleCalculator = function(divider, angleOffset){
@@ -90,7 +104,6 @@ icoolhuntRadar.equalAngleCalculator = function(divider, angleOffset){
 
 icoolhuntRadar.getPolarCoordGenerator = function(origin){
 	return function(angle, length){
-		console.log({origin:origin, angle:angle, length:length});
 		var ret = {
 			x:(length * Math.cos(angle)) + origin.x,
 			y:(length * Math.sin(angle)) + origin.y
