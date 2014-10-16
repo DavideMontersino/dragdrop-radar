@@ -1,5 +1,9 @@
 # icoolhunt-radar
 
+*this is just a new repo*
+
+Everything still needs to be done
+
 A radar graph widget that can be used to input values too.
 
 ## About
