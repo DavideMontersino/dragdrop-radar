@@ -29,6 +29,12 @@
 	fill: rgba(100,150,180,0.9);	
 }
 
+.radar-path{
+	stroke: rgba(80,120,150,0.5);
+	fill: rgba(100,150,180,0.5);
+}
+
+
 .radar-grid{
 	stroke-width: 1;
   	stroke: #aaa;

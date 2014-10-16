@@ -64,9 +64,8 @@ icoolhuntRadar.drawRadarPath = function(svg, radarRadius, angleCalculator, coord
 
 	svg.append("path")
 		.attr("d", lineFunction(defaultConfig.data))
-		.attr("stroke", "rgba(80,120,150,0.5)")
 		.attr("stroke-width", 2)
-		.attr("fill", "rgba(100,150,180,0.5)");
+		.attr("class", "radar-path");
 };
 
 //Draws the circles used to drag and drop values
