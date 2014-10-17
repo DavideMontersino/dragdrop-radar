@@ -9,10 +9,10 @@ var icoolhuntRadar = function(config) {
 	//we extend default configuration with the one passed by callee
 	extend(defaultConfig, config);
 
-	var svgCenter = {x:defaultConfig.width/2, y:defaultConfig.height/2}; //where should the center of our radar be?
-	var maxValue = d3.max(defaultConfig.data.map(function(d){return d.value;})); //The max value found in our data
+	defaultConfig.svgCenter = {x:defaultConfig.width/2, y:defaultConfig.height/2}; //where should the center of our radar be?
+	defaultConfig.maxValue = d3.max(defaultConfig.data.map(function(d){return d.value;})); //The max value found in our data
 
-	var coordG = icoolhuntRadar.getPolarCoordGenerator(svgCenter,10,15);
+	var coordG = icoolhuntRadar.getPolarCoordGenerator(defaultConfig.svgCenter);
   
 	//radar Radius is half the minimum dimension of svg, less a margin which is due to the handles radius
 	var radarRadius = (Math.min(defaultConfig.height,defaultConfig.width) / 2) - defaultConfig.radarHandlersRadius;
@@ -21,15 +21,18 @@ var icoolhuntRadar = function(config) {
 
 	//Main scale definition
 	var scale = d3.scale.linear()
-		.domain([0, maxValue]) //the input range is between 0 and the max value found in data
+		.domain([0, defaultConfig.maxValue]) //the input range is between 0 and the max value found in data
 		.range([defaultConfig.minRadius,radarRadius]); //the output range is between a minimum distance from the center (10) and radar radius
 
 	//add x,y coordinates to data: needed for d3's drag and drop
 	defaultConfig.data.forEach(function(element, index, array){
+		array[index].i = index;
+		array[index].gridLine = {p0:{x:0,y:0},p1:{x:0,p:0}}; // we create a container to save the radar segment to be used as a constraint when dragdropping handlers
 		array[index].x = coordG(angleCalculator(index), scale(element.value)).x;
 		array[index].y = coordG(angleCalculator(index), scale(element.value)).y;
+		array[index].defaultConfig = defaultConfig;
 	});
-	
+
 	//We draw the svg container
 	var svg = d3.select(defaultConfig.element)
 		.append("svg")
@@ -39,11 +42,11 @@ var icoolhuntRadar = function(config) {
 	//We draw the radar grid
 	icoolhuntRadar.drawRadarGrid(svg, radarRadius, angleCalculator, coordG);
 
-	//We draw the drag 'n drop handles
-	icoolhuntRadar.drawRadarHandlers(svg, radarRadius, angleCalculator, coordG, scale);
-
 	//We draw the radar path
 	icoolhuntRadar.drawRadarPath(svg, radarRadius,angleCalculator,coordG,scale);
+
+	//We draw the drag 'n drop handles
+	icoolhuntRadar.drawRadarHandlers(svg, radarRadius, angleCalculator, coordG, scale);
 
 };
 
@@ -56,9 +59,19 @@ icoolhuntRadar.drawRadarGrid = function(svg, radarRadius, angleCalculator, coord
 		.attr("class", "radar-grid");
 
 	lines
-		.attr("x1",function(d,i){return coordG(angleCalculator(i), defaultConfig.minRadius).x;})
+		.attr("x1",function(d,i){
+			var ret = coordG(angleCalculator(i), defaultConfig.minRadius);
+			d.gridLine.p0.x = ret.x;
+			d.gridLine.p0.y = ret.y;
+			return ret.x;
+		}) // we also want to save the grid to the data as reference for d&d
 		.attr("y1",function(d,i){return coordG(angleCalculator(i), defaultConfig.minRadius).y;})
-		.attr("x2",function(d,i){return coordG(angleCalculator(i), radarRadius).x;})
+		.attr("x2",function(d,i){
+			var ret = coordG(angleCalculator(i), radarRadius);
+			d.gridLine.p1.x = ret.x;
+			d.gridLine.p1.y = ret.y;
+			return ret.x;
+		})
 		.attr("y2",function(d,i){return coordG(angleCalculator(i), radarRadius).y;});
 };
 
@@ -74,11 +87,47 @@ icoolhuntRadar.drawRadarPath = function(svg, radarRadius, angleCalculator, coord
 		.attr("class", "radar-path");
 };
 
-icoolhuntRadar.dragmove = function(/*d*/) {
-  console.log(d3.event);
-  //d3.select(this)
-  //    .attr("cx", d.x = Math.max( d3.event.x))
-  //    .attr("cy", d.y = Math.max( d3.event.y));
+icoolhuntRadar.pointLineSegmentParameter = function(p2, p0, p1) {
+  var x10 = p1[0] - p0[0], y10 = p1[1] - p0[1],
+      x20 = p2[0] - p0[0], y20 = p2[1] - p0[1];
+  return (x20 * x10 + y20 * y10) / (x10 * x10 + y10 * y10);
+};
+
+icoolhuntRadar.dragmove = function(d) {
+
+	// we need to constrain the handler's movement along the radar grid;
+	// to do so, we move the point on the projection of the mouse poisition on the radar grid
+	// see this example to understand:
+	// http://bl.ocks.org/mbostock/4281513
+	
+	// those three functions are from this SO question:
+	// http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+	function sqr(x) { return x * x; }
+	function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y); }
+	
+	//gets the projection of a point 'p' on a segment defined by the two points 'v' and 'w'
+	function getProjection(p, v, w) {
+	  var l2 = dist2(v, w);
+	  if (l2 === 0) {return dist2(p, v);}
+	  var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+	  if (t < 0) {return dist2(p, v);}
+	  if (t > 1) {return dist2(p, w);}
+	  var projection = { x: v.x + t * (w.x - v.x),
+	                    y: v.y + t * (w.y - v.y) };
+	  return projection;
+	}
+
+	d.x = d3.event.x;
+	d.y = d3.event.y;
+	
+	var pointPosition = getProjection(d, d.gridLine.p0, d.gridLine.p1);
+
+	d.x = pointPosition.x;
+	d.y = pointPosition.y;
+	d3.select(this)
+		.attr("cx", d.x)
+		.attr("cy", d.y);
+	
 };
 
 //Draws the circles used to drag and drop values
