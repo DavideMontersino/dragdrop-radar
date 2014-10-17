@@ -7,7 +7,8 @@ var defaultConfig = {
 	width: '100px',
 	height: '100px',
 	radarHandlersRadius: 5, // the radius of the circles used to drag the values
-	minRadius: 20 // the minimum radius from which the radar starts
+	minRadius: 20, // the minimum radius from which the radar starts
+	radarPathInterpolation: "cardinal-closed"
 };
 
 /* global d3*/
@@ -72,7 +73,7 @@ icoolhuntRadar.drawRadarPath = function(svg, radarRadius, angleCalculator, coord
 	var lineFunction = d3.svg.line()
 		.x(function(d,i) { return coordG(angleCalculator(i), scale(d.value)).x;})
 		.y(function(d,i) { return coordG(angleCalculator(i), scale(d.value)).y;})
-		.interpolate("cardinal-closed");
+		.interpolate(defaultConfig.radarPathInterpolation);
 
 	svg.append("path")
 		.attr("d", lineFunction(defaultConfig.data))

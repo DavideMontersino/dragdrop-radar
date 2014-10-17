@@ -60,7 +60,7 @@ icoolhuntRadar.drawRadarPath = function(svg, radarRadius, angleCalculator, coord
 	var lineFunction = d3.svg.line()
 		.x(function(d,i) { return coordG(angleCalculator(i), scale(d.value)).x;})
 		.y(function(d,i) { return coordG(angleCalculator(i), scale(d.value)).y;})
-		.interpolate("cardinal-closed");
+		.interpolate(defaultConfig.radarPathInterpolation);
 
 	svg.append("path")
 		.attr("d", lineFunction(defaultConfig.data))
