@@ -8,7 +8,9 @@ var defaultConfig = {
 	height: '100px',
 	radarHandlersRadius: 5, // the radius of the circles used to drag the values
 	minRadius: 20, // the minimum radius from which the radar starts
-	radarPathInterpolation: "cardinal-closed"
+	radarPathInterpolation: "cardinal-closed",
+	maxValue: 100,
+	radarMargin: 0.1 // how much margin from data max value and end of radar grid
 };
 
 /* global d3*/
@@ -23,8 +25,7 @@ var icoolhuntRadar = function(config) {
 	extend(defaultConfig, config);
 
 	defaultConfig.svgCenter = {x:defaultConfig.width/2, y:defaultConfig.height/2}; //where should the center of our radar be?
-	defaultConfig.maxValue = d3.max(defaultConfig.data.map(function(d){return d.value;})); //The max value found in our data
-
+	
 	defaultConfig.coordG = icoolhuntRadar.getPolarCoordGenerator(defaultConfig.svgCenter);
   
 	//radar Radius is half the minimum dimension of svg, less a margin which is due to the handles radius
@@ -35,14 +36,12 @@ var icoolhuntRadar = function(config) {
 	//Main scale definition
 	defaultConfig.scale = d3.scale.linear()
 		.domain([0, defaultConfig.maxValue]) //the input range is between 0 and the max value found in data
-		.range([defaultConfig.minRadius,defaultConfig.radarRadius]); //the output range is between a minimum distance from the center (10) and radar radius
+		.range([defaultConfig.minRadius,defaultConfig.radarRadius * (1 - defaultConfig.radarMargin)]); //the output range is between a minimum distance from the center (10) and radar radius
 
 	//add x,y coordinates to data: needed for d3's drag and drop
 	defaultConfig.data.forEach(function(element, index, array){
 		array[index].i = index;
 		array[index].gridLine = {p0:{x:0,y:0},p1:{x:0,p:0}}; // we create a container to save the radar segment to be used as a constraint when dragdropping handlers
-		array[index].x = defaultConfig.coordG(defaultConfig.angleCalculator(index), defaultConfig.scale(element.value)).x;
-		array[index].y = defaultConfig.coordG(defaultConfig.angleCalculator(index), defaultConfig.scale(element.value)).y;
 		array[index].defaultConfig = defaultConfig;
 	});
 
@@ -52,13 +51,13 @@ var icoolhuntRadar = function(config) {
 		.attr('width',defaultConfig.width)
 		.attr('height',defaultConfig.height);
 
-	//We draw the radar grid //TODO remove radarRadius
+	//We draw the radar grid
 	icoolhuntRadar.drawRadarGrid();
 
-	//We draw the radar path //TODO remove radarRadius
+	//We draw the radar path
 	icoolhuntRadar.drawRadarPath();
 
-	//We draw the drag 'n drop handles //TODO remove radarRadius
+	//We draw the drag 'n drop handles
 	icoolhuntRadar.drawRadarHandlers();
 
 };
@@ -137,20 +136,17 @@ icoolhuntRadar.dragmove = function(d) {
 
 	var pointPosition = getProjection({x: d3.event.x,y: d3.event.y}, d.gridLine.p0, d.gridLine.p1);
 
-	d.x = pointPosition.x;
-	d.y = pointPosition.y;
 	
 	var distanceFromMin = Math.sqrt(dist2(d.gridLine.p0, pointPosition));
 	
 	var positionToValueScale = d3.scale.linear()
-		.domain([0,d.defaultConfig.radarRadius]) //the input range is between 0 and radar radius
-		.range([0, d.defaultConfig.maxValue]); //the output range is between 0 and the max value of the data //TODO maxValue should not be linked to max value of data
+		.domain([0,d.defaultConfig.radarRadius * (1 - defaultConfig.radarMargin)]) //the input range is between 0 and radar radius
+		.range([0, d.defaultConfig.maxValue ]); //the output range is between 0 and the max value of the data //TODO maxValue should not be linked to max value of data
 	
 	var newVal = positionToValueScale(distanceFromMin);
-	console.log({distance:distanceFromMin, newVal:newVal});
+	console.log({x:pointPosition.x, y:pointPosition.y, distance:distanceFromMin, newVal:newVal});
 	if (!isNaN(newVal)){
 		d.value = newVal;
-		console.log({newVal: d.value});
 	}
 	
 	//We draw the radar path 
@@ -158,10 +154,6 @@ icoolhuntRadar.dragmove = function(d) {
 
 	//We draw the drag 'n drop handles 
 	icoolhuntRadar.drawRadarHandlers();
-	/*d3.select(this)
-		.attr("cx", d.x)
-		.attr("cy", d.y);
-	*/
 };
 
 //Draws the circles used to drag and drop values
@@ -180,7 +172,12 @@ icoolhuntRadar.drawRadarHandlers = function(){
 	    .on("drag", icoolhuntRadar.dragmove);
 
 	dataCircles
-		.attr("cx",function(d,i){return defaultConfig.coordG(defaultConfig.angleCalculator(i), defaultConfig.scale(d.value)).x;})
+		.attr("cx",function(d,i){
+			var ret = defaultConfig.coordG(defaultConfig.angleCalculator(i), defaultConfig.scale(d.value));
+			d.x = ret.x;
+			d.y = ret.y;
+			return ret.x;
+		})
 		.attr("cy",function(d,i){return defaultConfig.coordG(defaultConfig.angleCalculator(i), defaultConfig.scale(d.value)).y;})
 		.call(drag);
 
