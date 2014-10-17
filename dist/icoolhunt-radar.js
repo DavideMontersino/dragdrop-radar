@@ -44,9 +44,7 @@ var icoolhuntRadar = function(config) {
 		defaultConfig.total += element.value;
 	});
 
-	console.log({maxValue: defaultConfig.maxValue, total: defaultConfig.total});
 	defaultConfig.maxValue = Math.max(defaultConfig.maxValue, defaultConfig.total);
-	console.log({maxValue: defaultConfig.maxValue, total: defaultConfig.total});
 
 	//Main scale definition
 	defaultConfig.scale = d3.scale.pow().exponent(1/defaultConfig.exponent)
@@ -96,7 +94,6 @@ icoolhuntRadar.drawRadarGrid = function( ){
 };
 
 icoolhuntRadar.drawRadarPath = function(){
-	console.log('entering drawRadarPath');
 	var lineFunction = d3.svg.line()
 		.x(function(d,i) { return defaultConfig.coordG(defaultConfig.angleCalculator(i), defaultConfig.scale(d.value)).x;})
 		.y(function(d,i) { return defaultConfig.coordG(defaultConfig.angleCalculator(i), defaultConfig.scale(d.value)).y;})
@@ -118,7 +115,6 @@ icoolhuntRadar.drawRadarPath = function(){
 
 icoolhuntRadar.dragmove = function(d) {
 
-	console.log('entering');
 	// we need to constrain the handler's movement along the radar grid;
 	// to do so, we move the point on the projection of the mouse poisition on the radar grid
 	// see this example to understand:
@@ -150,7 +146,6 @@ icoolhuntRadar.dragmove = function(d) {
 		.range([0, d.defaultConfig.maxValue ]); //the output range is between 0 and the max value of the data
 	
 	var newVal = positionToValueScale(distanceFromMin);
-	console.log({x:pointPosition.x, y:pointPosition.y, distance:distanceFromMin, newVal:newVal});
 	if (!isNaN(newVal)){
 		var difference = d.value - newVal, // how much we have to redistribute to other values
 		toDistribute = difference / (d.defaultConfig.total - d.value);
