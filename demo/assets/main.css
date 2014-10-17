@@ -39,6 +39,12 @@
   	stroke: #aaa;
   	fill: rgba(0,0,0,0);
 }
+
+text.axe{
+	font-size: 10px;
+	font-family: Helvetica, sans-serif;
+	fill: #aaa;
+}
 /* === subsections === */
 
 /* === hacks / overrides === */

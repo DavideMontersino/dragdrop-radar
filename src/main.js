@@ -55,7 +55,6 @@ var icoolhuntRadar = function(config) {
 // Draws the radar grid
 icoolhuntRadar.drawRadarGrid = function( ){
 	defaultConfig.valueGrid = d3.range(0,defaultConfig.maxValue,defaultConfig.grid);
-	console.log(defaultConfig.valueGrid);
 
 	var sectorGrid = defaultConfig.svg.selectAll("circle.radar-grid")
 		.data(defaultConfig.valueGrid);
@@ -69,6 +68,19 @@ icoolhuntRadar.drawRadarGrid = function( ){
 		.attr("cx", defaultConfig.svgCenter.x)
 		.attr("cy", defaultConfig.svgCenter.y)
 		.attr("r", function(d){ return defaultConfig.scale(d);});
+
+	var axeLabels = defaultConfig.svg.selectAll("text.axe")
+		.data(defaultConfig.valueGrid);
+
+	axeLabels
+		.enter()
+		.append("text")
+		.attr("class","axe");
+
+	axeLabels
+		.text(function(d){return d + "%";})
+		.attr("x", defaultConfig.svgCenter.x)
+		.attr("y", function(d){return (defaultConfig.svgCenter.y - defaultConfig.scale(d) - defaultConfig.axeLabelsSpace);});
 
 	var lines = defaultConfig.svg.selectAll("line")
 		.data(defaultConfig.data)

@@ -12,7 +12,8 @@ var defaultConfig = {
 	maxValue: 100,
 	radarMargin: 0.1, // how much margin from data max value and end of radar grid
 	exponent: 2, // 1 to use a linear scale; otherwise, a pow() scale will be used
-	grid: 10 //in how many sectors should grid be divided
+	grid: 10, //in how many sectors should grid be divided
+	axeLabelsSpace: 2 // the space between axes text and the concentric grid circles
 };
 
 /* global d3*/
@@ -72,7 +73,6 @@ var icoolhuntRadar = function(config) {
 // Draws the radar grid
 icoolhuntRadar.drawRadarGrid = function( ){
 	defaultConfig.valueGrid = d3.range(0,defaultConfig.maxValue,defaultConfig.grid);
-	console.log(defaultConfig.valueGrid);
 
 	var sectorGrid = defaultConfig.svg.selectAll("circle.radar-grid")
 		.data(defaultConfig.valueGrid);
@@ -86,6 +86,19 @@ icoolhuntRadar.drawRadarGrid = function( ){
 		.attr("cx", defaultConfig.svgCenter.x)
 		.attr("cy", defaultConfig.svgCenter.y)
 		.attr("r", function(d){ return defaultConfig.scale(d);});
+
+	var axeLabels = defaultConfig.svg.selectAll("text.axe")
+		.data(defaultConfig.valueGrid);
+
+	axeLabels
+		.enter()
+		.append("text")
+		.attr("class","axe");
+
+	axeLabels
+		.text(function(d){return d + "%";})
+		.attr("x", defaultConfig.svgCenter.x)
+		.attr("y", function(d){return (defaultConfig.svgCenter.y - defaultConfig.scale(d) - defaultConfig.axeLabelsSpace);});
 
 	var lines = defaultConfig.svg.selectAll("line")
 		.data(defaultConfig.data)
