@@ -18,11 +18,7 @@ var icoolhuntRadar = function(config) {
 
 	defaultConfig.angleCalculator = icoolhuntRadar.equalAngleCalculator(defaultConfig.data.length, - Math.PI / 2);
 
-	//Main scale definition
-	defaultConfig.scale = d3.scale.linear()
-		.domain([0, defaultConfig.maxValue]) //the input range is between 0 and the max value found in data
-		.range([defaultConfig.minRadius,defaultConfig.radarRadius * (1 - defaultConfig.radarMargin)]); //the output range is between a minimum distance from the center (10) and radar radius
-
+	
 	defaultConfig.total = 0;
 	//add x,y coordinates to data: needed for d3's drag and drop
 	defaultConfig.data.forEach(function(element, index, array){
@@ -31,6 +27,15 @@ var icoolhuntRadar = function(config) {
 		array[index].defaultConfig = defaultConfig;
 		defaultConfig.total += element.value;
 	});
+
+	console.log({maxValue: defaultConfig.maxValue, total: defaultConfig.total});
+	defaultConfig.maxValue = Math.max(defaultConfig.maxValue, defaultConfig.total);
+	console.log({maxValue: defaultConfig.maxValue, total: defaultConfig.total});
+
+	//Main scale definition
+	defaultConfig.scale = d3.scale.pow().exponent(1/defaultConfig.exponent)
+		.domain([0, defaultConfig.maxValue]) //the input range is between 0 and the max value found in data
+		.range([defaultConfig.minRadius,defaultConfig.radarRadius * (1 - defaultConfig.radarMargin)]); //the output range is between a minimum distance from the center (10) and radar radius
 
 	//We draw the svg container
 	defaultConfig.svg = d3.select(defaultConfig.element)
@@ -124,7 +129,7 @@ icoolhuntRadar.dragmove = function(d) {
 	
 	var distanceFromMin = Math.sqrt(dist2(d.gridLine.p0, pointPosition));
 	
-	var positionToValueScale = d3.scale.linear()
+	var positionToValueScale = d3.scale.pow().exponent(defaultConfig.exponent)
 		.domain([0,d.defaultConfig.radarRadius * (1 - defaultConfig.radarMargin)]) //the input range is between 0 and radar radius
 		.range([0, d.defaultConfig.maxValue ]); //the output range is between 0 and the max value of the data
 	
@@ -132,12 +137,17 @@ icoolhuntRadar.dragmove = function(d) {
 	console.log({x:pointPosition.x, y:pointPosition.y, distance:distanceFromMin, newVal:newVal});
 	if (!isNaN(newVal)){
 		var difference = d.value - newVal, // how much we have to redistribute to other values
-		toDistribute = difference / d.defaultConfig.total;
+		toDistribute = difference / (d.defaultConfig.total - d.value);
 
-		defaultConfig.data.forEach(function(element){
-			element.value += toDistribute * element.value;
+		var newTotal = 0;
+		defaultConfig.data.forEach(function(element,index){
+			if(d.i !== index){
+				element.value += toDistribute * element.value;
+				newTotal += element.value;
+			}
 		});
 		d.value = newVal;
+		console.log({newTotal: newTotal});
 	}
 	
 	//We draw the radar path 

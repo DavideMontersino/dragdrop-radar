@@ -5,5 +5,6 @@ var defaultConfig = {
 	minRadius: 20, // the minimum radius from which the radar starts
 	radarPathInterpolation: "linear-closed",
 	maxValue: 100,
-	radarMargin: 0.1 // how much margin from data max value and end of radar grid
+	radarMargin: 0.1, // how much margin from data max value and end of radar grid
+	exponent: 2 // 1 to use a linear scale; otherwise, a pow() scale will be used
 };
