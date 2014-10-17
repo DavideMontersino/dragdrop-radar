@@ -159,9 +159,10 @@ icoolhuntRadar.dragmove = function(d) {
 		defaultConfig.data.forEach(function(element,index){
 			if(d.i !== index){
 				element.value += toDistribute * element.value;
-				newTotal += element.value;
 			}
+			newTotal += element.value;
 		});
+		newTotal = newTotal - d.value + newVal;
 		d.value = newVal;
 		console.log({newTotal: newTotal});
 	}

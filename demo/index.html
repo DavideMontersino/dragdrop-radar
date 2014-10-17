@@ -29,26 +29,27 @@
     <script>
       /* begin demo script */
       window.data = [
-        {value: 100, name: 'first'},
-        {value: 50, name: 'second'},
-        {value: 70, name: 'third'},
-        {value: 30, name: 'fourth'},
-        {value: 80, name: 'fifth'},
-        {value: 100, name: 'sixth'},
-        {value: 50, name: 'seventh'},
-        {value: 70, name: 'eighth'},
-        {value: 30, name: 'nineth'},
-        {value: 80, name: 'tenth'},
-        {value: 100, name: 'eleventh'},
-        {value: 50, name: 'twelth'},
-        {value: 70, name: 'thirteenth'},
-        {value: 30, name: 'fourteenth'}
+        {value: 1, name: 'first'},
+        {value: 3, name: 'second'},
+        {value: 2, name: 'third'},
+        {value: 5, name: 'fourth'},
+        {value: 20, name: 'fifth'},
+        {value: 4, name: 'sixth'},
+        {value: 5, name: 'seventh'},
+        {value: 12, name: 'eighth'},
+        {value: 5, name: 'nineth'},
+        {value: 10, name: 'tenth'},
+        {value: 5, name: 'eleventh'},
+        {value: 5, name: 'twelth'},
+        {value: 18, name: 'thirteenth'},
+        {value: 5, name: 'fourteenth'}
         ];
 
       var n = icoolhuntRadar({
         width:'600',
         height:'400',
         element: '#radar-demo',
+        maxValue: 100,
         data: window.data
       });
 
