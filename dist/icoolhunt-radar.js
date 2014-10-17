@@ -38,11 +38,13 @@ var icoolhuntRadar = function(config) {
 		.domain([0, defaultConfig.maxValue]) //the input range is between 0 and the max value found in data
 		.range([defaultConfig.minRadius,defaultConfig.radarRadius * (1 - defaultConfig.radarMargin)]); //the output range is between a minimum distance from the center (10) and radar radius
 
+	defaultConfig.total = 0;
 	//add x,y coordinates to data: needed for d3's drag and drop
 	defaultConfig.data.forEach(function(element, index, array){
 		array[index].i = index;
 		array[index].gridLine = {p0:{x:0,y:0},p1:{x:0,p:0}}; // we create a container to save the radar segment to be used as a constraint when dragdropping handlers
 		array[index].defaultConfig = defaultConfig;
+		defaultConfig.total += element.value;
 	});
 
 	//We draw the svg container
@@ -94,7 +96,6 @@ icoolhuntRadar.drawRadarPath = function(){
 		.y(function(d,i) { return defaultConfig.coordG(defaultConfig.angleCalculator(i), defaultConfig.scale(d.value)).y;})
 		.interpolate(defaultConfig.radarPathInterpolation);
 
-console.log(defaultConfig.data[0].value);
 	var path = defaultConfig.svg.selectAll("path")
 		.data([defaultConfig.data]);
 
@@ -135,13 +136,12 @@ icoolhuntRadar.dragmove = function(d) {
 	}
 
 	var pointPosition = getProjection({x: d3.event.x,y: d3.event.y}, d.gridLine.p0, d.gridLine.p1);
-
 	
 	var distanceFromMin = Math.sqrt(dist2(d.gridLine.p0, pointPosition));
 	
 	var positionToValueScale = d3.scale.linear()
 		.domain([0,d.defaultConfig.radarRadius * (1 - defaultConfig.radarMargin)]) //the input range is between 0 and radar radius
-		.range([0, d.defaultConfig.maxValue ]); //the output range is between 0 and the max value of the data //TODO maxValue should not be linked to max value of data
+		.range([0, d.defaultConfig.maxValue ]); //the output range is between 0 and the max value of the data
 	
 	var newVal = positionToValueScale(distanceFromMin);
 	console.log({x:pointPosition.x, y:pointPosition.y, distance:distanceFromMin, newVal:newVal});
