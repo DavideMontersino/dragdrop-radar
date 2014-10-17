@@ -15,14 +15,14 @@ var icoolhuntRadar = function(config) {
 	var coordG = icoolhuntRadar.getPolarCoordGenerator(defaultConfig.svgCenter);
   
 	//radar Radius is half the minimum dimension of svg, less a margin which is due to the handles radius
-	var radarRadius = (Math.min(defaultConfig.height,defaultConfig.width) / 2) - defaultConfig.radarHandlersRadius;
+	defaultConfig.radarRadius = (Math.min(defaultConfig.height,defaultConfig.width) / 2) - defaultConfig.radarHandlersRadius;
 
 	var angleCalculator = icoolhuntRadar.equalAngleCalculator(defaultConfig.data.length, - Math.PI / 2);
 
 	//Main scale definition
 	var scale = d3.scale.linear()
 		.domain([0, defaultConfig.maxValue]) //the input range is between 0 and the max value found in data
-		.range([defaultConfig.minRadius,radarRadius]); //the output range is between a minimum distance from the center (10) and radar radius
+		.range([defaultConfig.minRadius,defaultConfig.radarRadius]); //the output range is between a minimum distance from the center (10) and radar radius
 
 	//add x,y coordinates to data: needed for d3's drag and drop
 	defaultConfig.data.forEach(function(element, index, array){
@@ -39,14 +39,14 @@ var icoolhuntRadar = function(config) {
 		.attr('width',defaultConfig.width)
 		.attr('height',defaultConfig.height);
 
-	//We draw the radar grid
-	icoolhuntRadar.drawRadarGrid(svg, radarRadius, angleCalculator, coordG);
+	//We draw the radar grid //TODO remove radarRadius
+	icoolhuntRadar.drawRadarGrid(svg, defaultConfig.radarRadius, angleCalculator, coordG);
 
-	//We draw the radar path
-	icoolhuntRadar.drawRadarPath(svg, radarRadius,angleCalculator,coordG,scale);
+	//We draw the radar path //TODO remove radarRadius
+	icoolhuntRadar.drawRadarPath(svg, defaultConfig.radarRadius,angleCalculator,coordG,scale);
 
-	//We draw the drag 'n drop handles
-	icoolhuntRadar.drawRadarHandlers(svg, radarRadius, angleCalculator, coordG, scale);
+	//We draw the drag 'n drop handles //TODO remove radarRadius
+	icoolhuntRadar.drawRadarHandlers(svg, defaultConfig.radarRadius, angleCalculator, coordG, scale);
 
 };
 
@@ -87,12 +87,6 @@ icoolhuntRadar.drawRadarPath = function(svg, radarRadius, angleCalculator, coord
 		.attr("class", "radar-path");
 };
 
-icoolhuntRadar.pointLineSegmentParameter = function(p2, p0, p1) {
-  var x10 = p1[0] - p0[0], y10 = p1[1] - p0[1],
-      x20 = p2[0] - p0[0], y20 = p2[1] - p0[1];
-  return (x20 * x10 + y20 * y10) / (x10 * x10 + y10 * y10);
-};
-
 icoolhuntRadar.dragmove = function(d) {
 
 	// we need to constrain the handler's movement along the radar grid;
@@ -117,13 +111,18 @@ icoolhuntRadar.dragmove = function(d) {
 	  return projection;
 	}
 
-	d.x = d3.event.x;
-	d.y = d3.event.y;
-	
-	var pointPosition = getProjection(d, d.gridLine.p0, d.gridLine.p1);
+	var pointPosition = getProjection({x: d3.event.x,y: d3.event.y}, d.gridLine.p0, d.gridLine.p1);
 
 	d.x = pointPosition.x;
 	d.y = pointPosition.y;
+	
+	var distanceFromMin = Math.sqrt(dist2(d.gridLine.p0, d));
+	
+	var positionToValueScale = d3.scale.linear()
+		.domain([0,d.defaultConfig.radarRadius]) //the input range is between 0 and radar radius
+		.range([0, d.defaultConfig.maxValue]); //the output range is between 0 and the max value of the data //TODO maxValue should not be linked to max value of data
+	d.value = positionToValueScale(distanceFromMin);
+	
 	d3.select(this)
 		.attr("cx", d.x)
 		.attr("cy", d.y);

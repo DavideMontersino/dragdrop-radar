@@ -28,12 +28,7 @@
 
     <script>
       /* begin demo script */
-
-      var n = icoolhuntRadar({
-        width:'600',
-        height:'400',
-        element: '#radar-demo',
-        data: [
+      window.data = [
         {value: 100, name: 'first'},
         {value: 50, name: 'second'},
         {value: 70, name: 'third'},
@@ -48,7 +43,13 @@
         {value: 50, name: 'twelth'},
         {value: 70, name: 'thirteenth'},
         {value: 30, name: 'fourteenth'}
-        ]
+        ];
+
+      var n = icoolhuntRadar({
+        width:'600',
+        height:'400',
+        element: '#radar-demo',
+        data: window.data
       });
 
       /* end demo script */
