@@ -53,7 +53,7 @@ var icoolhuntRadar = function(config) {
 };
 
 icoolhuntRadar.drawDataLabels = function(){
-	var dataLabels = defaultConfig.svg.selectAll("text.dataLabels")
+	var dataLabels = defaultConfig.svg.selectAll("text.data-labels")
 		.data(defaultConfig.data);
 
 	dataLabels
@@ -204,11 +204,14 @@ icoolhuntRadar.dragmove = function(d) {
 		console.log(d.value);
 	}
 	
-	//draw the radar path 
+	//redraw the radar path 
 	icoolhuntRadar.drawRadarPath();
 
-	//draw the drag 'n drop handles 
+	//redraw the drag 'n drop handles 
 	icoolhuntRadar.drawRadarHandlers();
+
+	//redraw data labels
+	icoolhuntRadar.drawDataLabels();
 };
 
 //Draws the circles used to drag and drop values
