@@ -11,7 +11,8 @@ var defaultConfig = {
 	radarPathInterpolation: "linear-closed",
 	maxValue: 100,
 	radarMargin: 0.1, // how much margin from data max value and end of radar grid
-	exponent: 2 // 1 to use a linear scale; otherwise, a pow() scale will be used
+	exponent: 2, // 1 to use a linear scale; otherwise, a pow() scale will be used
+	grid: 10 //in how many sectors should grid be divided
 };
 
 /* global d3*/
@@ -70,6 +71,22 @@ var icoolhuntRadar = function(config) {
 
 // Draws the radar grid
 icoolhuntRadar.drawRadarGrid = function( ){
+	defaultConfig.valueGrid = d3.range(0,defaultConfig.maxValue,defaultConfig.grid);
+	console.log(defaultConfig.valueGrid);
+
+	var sectorGrid = defaultConfig.svg.selectAll("circle.radar-grid")
+		.data(defaultConfig.valueGrid);
+
+	sectorGrid
+		.enter()
+		.append("circle")
+		.attr("class", "radar-grid");
+
+	sectorGrid
+		.attr("cx", defaultConfig.svgCenter.x)
+		.attr("cy", defaultConfig.svgCenter.y)
+		.attr("r", function(d){ return defaultConfig.scale(d);});
+
 	var lines = defaultConfig.svg.selectAll("line")
 		.data(defaultConfig.data)
 		.enter()
@@ -163,6 +180,7 @@ icoolhuntRadar.dragmove = function(d) {
 		//are we drifting away from the starting total? let's correct it:
 		var error = newTotal - defaultConfig.total;
 		d.value = newVal - error;
+		console.log(d.value);
 	}
 	
 	//draw the radar path 
@@ -174,7 +192,7 @@ icoolhuntRadar.dragmove = function(d) {
 
 //Draws the circles used to drag and drop values
 icoolhuntRadar.drawRadarHandlers = function(){
-	var dataCircles = defaultConfig.svg.selectAll("circle")
+	var dataCircles = defaultConfig.svg.selectAll("circle.radar-handlers")
 		.data(defaultConfig.data);
 
 	dataCircles

@@ -37,6 +37,7 @@
 .radar-grid{
 	stroke-width: 1;
   	stroke: #aaa;
+  	fill: rgba(0,0,0,0);
 }
 /* === subsections === */
 
