@@ -162,15 +162,18 @@ icoolhuntRadar.dragmove = function(d) {
 			}
 			newTotal += element.value;
 		});
+		
 		newTotal = newTotal - d.value + newVal;
-		d.value = newVal;
-		console.log({newTotal: newTotal});
+		
+		//are we drifting away from the starting total? let's correct it:
+		var error = newTotal - defaultConfig.total;
+		d.value = newVal - error;
 	}
 	
-	//We draw the radar path 
+	//draw the radar path 
 	icoolhuntRadar.drawRadarPath();
 
-	//We draw the drag 'n drop handles 
+	//draw the drag 'n drop handles 
 	icoolhuntRadar.drawRadarHandlers();
 };
 
