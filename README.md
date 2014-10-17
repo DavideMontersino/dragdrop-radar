@@ -1,6 +1,6 @@
 # icoolhunt-radar
 
-*this is just a new repo*
+*this is in early Alpha stage!*
 
 Everything still needs to be done
 
