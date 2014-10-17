@@ -40,7 +40,7 @@
   	fill: rgba(0,0,0,0);
 }
 
-text.axe{
+text.axe-labels, text.data-labels{
 	font-size: 10px;
 	font-family: Helvetica, sans-serif;
 	fill: #aaa;

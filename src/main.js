@@ -52,36 +52,56 @@ var icoolhuntRadar = function(config) {
 
 };
 
+icoolhuntRadar.drawDataLabels = function(){
+	var dataLabels = defaultConfig.svg.selectAll("text.dataLabels")
+		.data(defaultConfig.data);
+
+	dataLabels
+		.enter()
+		.append("text")
+		.attr("class","data-labels");
+
+	dataLabels
+		.text(function(d){return d.name + " (" + d.value.toFixed(0) + "%)";})
+		.attr("transform", function(d,i) {
+			var ret = defaultConfig.coordG(defaultConfig.angleCalculator(i), defaultConfig.radarRadius - 100);
+			return "translate(" + ret.x + "," + ret.y + ") rotate(" + defaultConfig.angleCalculator(i)* (180/Math.PI) +")";
+	    })
+	    .attr("dy",-4);
+};
 // Draws the radar grid
 icoolhuntRadar.drawRadarGrid = function( ){
 	defaultConfig.valueGrid = d3.range(0,defaultConfig.maxValue,defaultConfig.grid);
 
-	var sectorGrid = defaultConfig.svg.selectAll("circle.radar-grid")
+	//The concentric grid
+	var concentricGrid = defaultConfig.svg.selectAll("circle.radar-grid")
 		.data(defaultConfig.valueGrid);
 
-	sectorGrid
+	concentricGrid
 		.enter()
 		.append("circle")
 		.attr("class", "radar-grid");
 
-	sectorGrid
+	concentricGrid
 		.attr("cx", defaultConfig.svgCenter.x)
 		.attr("cy", defaultConfig.svgCenter.y)
 		.attr("r", function(d){ return defaultConfig.scale(d);});
 
-	var axeLabels = defaultConfig.svg.selectAll("text.axe")
+	//The concentric grid's labels
+	var axeLabels = defaultConfig.svg.selectAll("text.axe-labels")
 		.data(defaultConfig.valueGrid);
 
 	axeLabels
 		.enter()
 		.append("text")
-		.attr("class","axe");
+		.attr("class","axe-labels");
 
 	axeLabels
 		.text(function(d){return d + "%";})
 		.attr("x", defaultConfig.svgCenter.x)
 		.attr("y", function(d){return (defaultConfig.svgCenter.y - defaultConfig.scale(d) - defaultConfig.axeLabelsSpace);});
 
+	// one line for each value
 	var lines = defaultConfig.svg.selectAll("line")
 		.data(defaultConfig.data)
 		.enter()
@@ -103,7 +123,11 @@ icoolhuntRadar.drawRadarGrid = function( ){
 			return ret.x;
 		})
 		.attr("y2",function(d,i){return defaultConfig.coordG(defaultConfig.angleCalculator(i), d.defaultConfig.radarRadius).y;});
+
+	icoolhuntRadar.drawDataLabels();
+
 };
+
 
 icoolhuntRadar.drawRadarPath = function(){
 	var lineFunction = d3.svg.line()
