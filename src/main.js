@@ -131,6 +131,12 @@ icoolhuntRadar.dragmove = function(d) {
 	var newVal = positionToValueScale(distanceFromMin);
 	console.log({x:pointPosition.x, y:pointPosition.y, distance:distanceFromMin, newVal:newVal});
 	if (!isNaN(newVal)){
+		var difference = d.value - newVal, // how much we have to redistribute to other values
+		toDistribute = difference / d.defaultConfig.total;
+
+		defaultConfig.data.forEach(function(element){
+			element.value += toDistribute * element.value;
+		});
 		d.value = newVal;
 	}
 	

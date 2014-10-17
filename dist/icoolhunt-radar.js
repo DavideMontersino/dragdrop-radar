@@ -8,7 +8,7 @@ var defaultConfig = {
 	height: '100px',
 	radarHandlersRadius: 5, // the radius of the circles used to drag the values
 	minRadius: 20, // the minimum radius from which the radar starts
-	radarPathInterpolation: "cardinal-closed",
+	radarPathInterpolation: "linear-closed",
 	maxValue: 100,
 	radarMargin: 0.1 // how much margin from data max value and end of radar grid
 };
@@ -146,6 +146,12 @@ icoolhuntRadar.dragmove = function(d) {
 	var newVal = positionToValueScale(distanceFromMin);
 	console.log({x:pointPosition.x, y:pointPosition.y, distance:distanceFromMin, newVal:newVal});
 	if (!isNaN(newVal)){
+		var difference = d.value - newVal, // how much we have to redistribute to other values
+		toDistribute = difference / d.defaultConfig.total;
+
+		defaultConfig.data.forEach(function(element){
+			element.value += toDistribute * element.value;
+		});
 		d.value = newVal;
 	}
 	
