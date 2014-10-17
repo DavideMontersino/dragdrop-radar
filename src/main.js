@@ -146,6 +146,8 @@ icoolhuntRadar.dragmove = function(d) {
 		.range([0, d.defaultConfig.maxValue ]); //the output range is between 0 and the max value of the data
 	
 	var newVal = positionToValueScale(distanceFromMin);
+
+	newVal = Math.min(newVal, defaultConfig.maxValue); // we do not want our values to be greater than max value, of course!
 	if (!isNaN(newVal)){
 		var difference = d.value - newVal, // how much we have to redistribute to other values
 		toDistribute = difference / (d.defaultConfig.total - d.value);
