@@ -37,6 +37,12 @@ var icoolhuntRadar = function(config) {
 		.domain([0, maxValue]) //the input range is between 0 and the max value found in data
 		.range([defaultConfig.minRadius,radarRadius]); //the output range is between a minimum distance from the center (10) and radar radius
 
+	//add x,y coordinates to data: needed for d3's drag and drop
+	defaultConfig.data.forEach(function(element, index, array){
+		array[index].x = coordG(angleCalculator(index), scale(element.value)).x;
+		array[index].y = coordG(angleCalculator(index), scale(element.value)).y;
+	});
+	
 	//We draw the svg container
 	var svg = d3.select(defaultConfig.element)
 		.append("svg")
