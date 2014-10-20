@@ -53,7 +53,6 @@ function icoolhuntRadar(config) {
 		$this.config.total += element.value;
 	});
 
-	console.log(this.data);
 	this.config.maxValue = Math.max(this.config.maxValue, this.config.total);
 
 	//Main scale definition
@@ -207,7 +206,6 @@ icoolhuntRadar.prototype = {
 		
 		var distanceFromMin = Math.sqrt(dist2(d.gridLine.p0, pointPosition));
 		
-		console.log($this);
 		var positionToValueScale = d3.scale.pow().exponent($this.config.exponent)
 			.domain([0,$this.config.radarRadius * (1 - $this.config.radarMargin)]) //the input range is between 0 and radar radius
 			.range([0, d.defaultConfig.maxValue ]); //the output range is between 0 and the max value of the data
