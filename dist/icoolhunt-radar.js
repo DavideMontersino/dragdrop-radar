@@ -26,6 +26,7 @@ var extend = function(dst, src){
 	for (var attrname in dst) { ret[attrname] = src[attrname] !== undefined ? src[attrname] :  dst[attrname]; }
 	return ret;
 };
+
 // Base function.
 function icoolhuntRadar(config) {
 	/*jshint validthis: true */
@@ -33,6 +34,9 @@ function icoolhuntRadar(config) {
 	//we extend default configuration with the one passed by callee
 	this.config = extend(defaultConfig, config);
 	this.data = config.data;
+
+	//We initialize dispatchers
+	this.dispatchOnChange = d3.dispatch("change");
 
 	this.config.svgCenter = {x:this.config.width/2, y:this.config.height/2}; //where should the center of our radar be?
 	
@@ -80,6 +84,10 @@ icoolhuntRadar.prototype = {
 	/*jshint validthis: true */
 	VERSION: '0.0.0', // Version.
 
+	change: function(name,func){
+		this.dispatchOnChange.on(name,func);
+	},
+	//Draws the radial data labels
 	drawDataLabels: function(){
 		var $this = this;
 		var dataLabels = this.svg.selectAll("text.data-labels")
@@ -237,7 +245,7 @@ icoolhuntRadar.prototype = {
 			d.value = newVal;
 		}
 		
-		
+		$this.dispatchOnChange.change.apply(d);
 		//redraw the radar path 
 		this.drawRadarPath();
 

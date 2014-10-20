@@ -24,9 +24,19 @@ Or grab the [source](https://github.com/DavideMontersino/icoolhunt-radar/dist/ic
 
 Basic usage is as follows:
 
-    icoolhunt-radar();
-
-For advanced usage, see the documentation.
+###Html
+    <body>
+        <div id="myRadar"></div>
+        <script type="text/javascript">
+            var myRadar = new iCoolhuntRadar({
+                element: "#myRadar",
+                data: [
+                    {value: 18, name: 'first'},
+                    {value: 3, name: 'second'},
+                    {value: 2, name: 'third'}]
+                });
+        </script>
+    </body>
 
 ## Documentation
 
