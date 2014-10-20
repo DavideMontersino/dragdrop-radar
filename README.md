@@ -1,4 +1,4 @@
-# icoolhunt-radar
+# dragdrop-radar
 
 *this is in early Alpha stage!*
 
@@ -10,25 +10,24 @@ A radar graph widget that can be used to input values too.
 
 A JavaScript library by Davide Orazio Montersino.
 
-See the [project homepage](http://DavideMontersino.github.io/icoolhunt-radar).
+See the [project homepage](http://DavideMontersino.github.io/dragdrop-radar).
 
 ## Installation
 
 Using Bower:
 
-    bower install icoolhunt-radar
+    bower install dragdrop-radar
 
-Or grab the [source](https://github.com/DavideMontersino/icoolhunt-radar/dist/icoolhunt-radar.js) ([minified](https://github.com/DavideMontersino/icoolhunt-radar/dist/icoolhunt-radar.min.js)).
+Or grab the [source](https://github.com/DavideMontersino/dragdrop-radar/dist/dragdrop-radar.js) ([minified](https://github.com/DavideMontersino/dragdrop-radar/dist/dragdrop-radar.min.js)).
 
 ## Usage
 
 Basic usage is as follows:
 
-###Html
     <body>
         <div id="myRadar"></div>
         <script type="text/javascript">
-            var myRadar = new iCoolhuntRadar({
+            var myRadar = new dragdropRadar({
                 element: "#myRadar",
                 data: [
                     {value: 18, name: 'first'},

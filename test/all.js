@@ -1,8 +1,8 @@
 d3 = function(){};
 test("the base function exists", function() {
-  ok(icoolhuntRadar);
+  ok(dragdropRadar);
 });
 test("another test",function(assert){
-  var n = icoolhuntRadar({width:'300px'});
-  assert.equal(icoolhuntRadar.getConfig().width,'300px');
+  var n = dragdropRadar({width:'300px'});
+  assert.equal(dragdropRadar.getConfig().width,'300px');
 });

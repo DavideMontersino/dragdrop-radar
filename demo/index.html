@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>icoolhunt-radar demo</title>
+    <title>dragdrop-radar demo</title>
     <link rel="stylesheet" href="./assets/normalize.css" />
     <link rel="stylesheet" href="./assets/main.css" />
     <style>
@@ -11,14 +11,14 @@
     </style>
   </head>
   <body>
-    <h1>icoolhunt-radar demo</h1>
+    <h1>dragdrop-radar demo</h1>
 
     <!-- begin demo markup -->
 
     <!-- end demo markup -->
 
-    <p>See the <a href="http://DavideMontersino.github.io/icoolhunt-radar">project homepage</a>.
-    <p>Check out the <a href="https://github.com/DavideMontersino/icoolhunt-radar">project repo</a>.
+    <p>See the <a href="http://DavideMontersino.github.io/dragdrop-radar">project homepage</a>.
+    <p>Check out the <a href="https://github.com/DavideMontersino/dragdrop-radar">project repo</a>.
     <p>Copyright 2014 Davide Orazio Montersino</p>
 
     <div id="radar-demo">
@@ -28,7 +28,7 @@
     </div>
 
     <script src="./../bower_components/d3/d3.js"></script>
-    <script src="./../dist/icoolhunt-radar.js"></script>
+    <script src="./../dist/dragdrop-radar.js"></script>
 
     <script>
       /* begin demo script */
@@ -66,7 +66,7 @@
         {value: 5, name: 'fourteenth'}
         ];
 
-      var n = new icoolhuntRadar({
+      var n = new dragdropRadar({
         width:'600',
         height:'400',
         element: '#radar-demo',
@@ -74,7 +74,7 @@
         data: window.data
       });
 
-      var n2 = new icoolhuntRadar({
+      var n2 = new dragdropRadar({
         width:'600',
         height:'400',
         element: '#radar-demo2',

@@ -5,7 +5,7 @@ Basic usage is as follows:
     <body>
         <div id="myRadar"></div>
         <script type="text/javascript">
-            var myRadar = new iCoolhuntRadar({
+            var myRadar = new dragdropRadar({
                 element: "#myRadar",
                 data: [
                     {value: 18, name: 'first'},

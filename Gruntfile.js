@@ -35,7 +35,7 @@ module.exports = function(grunt) {
     },
 
     jshint: {
-      files: ['dist/icoolhunt-radar.js'],
+      files: ['dist/dragdrop-radar.js'],
       options: {
         globals: {
           console: true,

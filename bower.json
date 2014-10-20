@@ -1,7 +1,7 @@
 {
-  "name": "icoolhunt-radar",
+  "name": "dragdrop-radar",
   "version": "0.0.0",
-  "main": "dist/icoolhunt-radar.min.js",
+  "main": "dist/dragdrop-radar.min.js",
   "ignore": [
     "**/.*",
     "node_modules",

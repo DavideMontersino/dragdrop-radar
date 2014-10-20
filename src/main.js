@@ -1,5 +1,5 @@
 /* global d3*/
-/* icoolhunt-radar main */
+/* dragdrop-radar main */
 
 var extend = function(dst, src){
 	var ret = [];
@@ -8,7 +8,7 @@ var extend = function(dst, src){
 };
 
 // Base function.
-function icoolhuntRadar(config) {
+function dragdropRadar(config) {
 	/*jshint validthis: true */
 	var $this = this;
 	//we extend default configuration with the one passed by callee
@@ -60,7 +60,7 @@ function icoolhuntRadar(config) {
 	this.drawRadarHandlers();
 
 }
-icoolhuntRadar.prototype = {
+dragdropRadar.prototype = {
 	/*jshint validthis: true */
 	VERSION: '0.0.0', // Version.
 
@@ -283,4 +283,4 @@ icoolhuntRadar.prototype = {
 };
 
 // Export to the root, which is probably `window`.
-root.icoolhuntRadar = icoolhuntRadar;
+root.dragdropRadar = dragdropRadar;
