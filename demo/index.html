@@ -23,6 +23,10 @@
 
     <div id="radar-demo">
     </div>
+
+    <div id="radar-demo2">
+    </div>
+
     <script src="./../bower_components/d3/d3.js"></script>
     <script src="./../dist/icoolhunt-radar.js"></script>
 
@@ -45,12 +49,37 @@
         {value: 5, name: 'fourteenth'}
         ];
 
-      var n = icoolhuntRadar({
+       window.data2 = [
+        {value: 18, name: 'first'},
+        {value: 3, name: 'second'},
+        {value: 2, name: 'third'},
+        {value: 5, name: 'fourth'},
+        {value: 10, name: 'fifth'},
+        {value: 4, name: 'sixth'},
+        {value: 5, name: 'seventh'},
+        {value: 12, name: 'eighth'},
+        {value: 5, name: 'nineth'},
+        {value: 20, name: 'tenth'},
+        {value: 5, name: 'eleventh'},
+        {value: 5, name: 'twelth'},
+        {value: 1, name: 'thirteenth'},
+        {value: 5, name: 'fourteenth'}
+        ];
+
+      var n = new icoolhuntRadar({
         width:'600',
         height:'400',
         element: '#radar-demo',
         maxValue: 100,
         data: window.data
+      });
+
+      var n2 = new icoolhuntRadar({
+        width:'600',
+        height:'400',
+        element: '#radar-demo2',
+        maxValue: 100,
+        data: window.data2
       });
 
       /* end demo script */
