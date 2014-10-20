@@ -184,25 +184,31 @@ icoolhuntRadar.dragmove = function(d) {
 	var newVal = positionToValueScale(distanceFromMin);
 
 	newVal = Math.min(newVal, defaultConfig.maxValue); // we do not want our values to be greater than max value, of course!
-	if (!isNaN(newVal)){
-		var difference = d.value - newVal, // how much we have to redistribute to other values
-		toDistribute = difference / (d.defaultConfig.total - d.value);
+	
+	if (defaultConfig.equalize){
+		if (!isNaN(newVal)){
+			var difference = d.value - newVal, // how much we have to redistribute to other values
+			toDistribute = difference / (d.defaultConfig.total - d.value);
 
-		var newTotal = 0;
-		defaultConfig.data.forEach(function(element,index){
-			if(d.i !== index){
-				element.value += toDistribute * element.value;
-			}
-			newTotal += element.value;
-		});
-		
-		newTotal = newTotal - d.value + newVal;
-		
-		//are we drifting away from the starting total? let's correct it:
-		var error = newTotal - defaultConfig.total;
-		d.value = newVal - error;
-		console.log(d.value);
+			var newTotal = 0;
+			defaultConfig.data.forEach(function(element,index){
+				if(d.i !== index){
+					element.value += toDistribute * element.value;
+				}
+				newTotal += element.value;
+			});
+			
+			newTotal = newTotal - d.value + newVal;
+			
+			//are we drifting away from the starting total? let's correct it:
+			var error = newTotal - defaultConfig.total;
+			d.value = newVal - error;
+			console.log(d.value);
+		}
+	} else {
+		d.value = newVal;
 	}
+	
 	
 	//redraw the radar path 
 	icoolhuntRadar.drawRadarPath();

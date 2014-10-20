@@ -13,7 +13,8 @@ var defaultConfig = {
 	radarMargin: 0.1, // how much margin from data max value and end of radar grid
 	exponent: 2, // 1 to use a linear scale; otherwise, a pow() scale will be used
 	grid: 10, //in how many sectors should grid be divided
-	axeLabelsSpace: 2 // the space between axes text and the concentric grid circles
+	axeLabelsSpace: 2, // the space between axes text and the concentric grid circles
+	equalize: false //if true, changing one value will result in all other to decrease (and vice-versa), in order to mantain a constant sum
 };
 
 /* global d3*/
@@ -202,25 +203,31 @@ icoolhuntRadar.dragmove = function(d) {
 	var newVal = positionToValueScale(distanceFromMin);
 
 	newVal = Math.min(newVal, defaultConfig.maxValue); // we do not want our values to be greater than max value, of course!
-	if (!isNaN(newVal)){
-		var difference = d.value - newVal, // how much we have to redistribute to other values
-		toDistribute = difference / (d.defaultConfig.total - d.value);
+	
+	if (defaultConfig.equalize){
+		if (!isNaN(newVal)){
+			var difference = d.value - newVal, // how much we have to redistribute to other values
+			toDistribute = difference / (d.defaultConfig.total - d.value);
 
-		var newTotal = 0;
-		defaultConfig.data.forEach(function(element,index){
-			if(d.i !== index){
-				element.value += toDistribute * element.value;
-			}
-			newTotal += element.value;
-		});
-		
-		newTotal = newTotal - d.value + newVal;
-		
-		//are we drifting away from the starting total? let's correct it:
-		var error = newTotal - defaultConfig.total;
-		d.value = newVal - error;
-		console.log(d.value);
+			var newTotal = 0;
+			defaultConfig.data.forEach(function(element,index){
+				if(d.i !== index){
+					element.value += toDistribute * element.value;
+				}
+				newTotal += element.value;
+			});
+			
+			newTotal = newTotal - d.value + newVal;
+			
+			//are we drifting away from the starting total? let's correct it:
+			var error = newTotal - defaultConfig.total;
+			d.value = newVal - error;
+			console.log(d.value);
+		}
+	} else {
+		d.value = newVal;
 	}
+	
 	
 	//redraw the radar path 
 	icoolhuntRadar.drawRadarPath();
