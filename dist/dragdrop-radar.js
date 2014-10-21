@@ -129,7 +129,7 @@ dragdropRadar.prototype = {
 
 		//The concentric grid
 		if ($this.config.grid !== undefined && $this.config.grid > 0){
-			$this.valueGrid = d3.range(0,$this.config.maxValue,$this.config.grid);
+			$this.valueGrid = d3.range(0,$this.config.maxValue,($this.config.total /$this.config.grid));
 			var concentricGrid = this.svg.selectAll("circle.radar-grid")
 				.data($this.valueGrid);
 
