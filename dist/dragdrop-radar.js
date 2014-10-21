@@ -18,6 +18,7 @@ var defaultConfig = {
 	showAxeLabels: true,
 	labelPosition: 'outer', // inner or outer
 	showValuesOnLabels: true,
+	showValuesOnTooltip: true,
 	measureUnit: "%", //measure unit to append to labels
 	decimalValues: 0, // decimal values to be showed in labels
 	editable: true,
@@ -329,6 +330,41 @@ dragdropRadar.prototype = {
 			dataCircles
 				.call(drag);
 		}
+
+		dataCircles.on("mouseover", function(d){
+			d.tooltip = 'visible';
+			$this.drawRadarHandlers();
+		});
+		dataCircles.on("mouseout", function(d){
+			d.tooltip = 'none';
+			$this.drawRadarHandlers();
+		});
+
+		var tooltip = this.svg.selectAll("text.tooltip")
+			.data($this.data);
+
+		tooltip.enter()
+			.append("text")
+			.attr("class", "tooltip");
+
+		tooltip
+			.text(function(d){
+				return d.name + (d.defaultConfig.showValuesOnTooltip ? (" (" + d.value.toFixed($this.config.decimalValues) + $this.config.measureUnit + ")") : '');
+			})
+			.attr("x", function(d,i){return $this.coordG($this.angleCalculator(i), $this.scale(d.value) + 5).x;})
+			.attr("y", function(d,i){return $this.coordG($this.angleCalculator(i), $this.scale(d.value) + 5).y;})
+			.attr("text-anchor", function(d,i) {
+		        // are we past the center?
+		        return Math.cos($this.angleCalculator(i)) < 0 ?
+		            "end" : "start";
+		    })
+			.style("visibility", function(d,i){
+				console.log({i:i, currentDataOver:$this.currentDataOver});
+				if(d.tooltip === "visible"){
+					return "visible";
+				}
+				return "hidden";
+			});
 	},
 	equalAngleCalculator: function(divider, angleOffset){
 		return function(i){

@@ -74,6 +74,10 @@ measure unit to append to labels.
 default: true
 if true, dataset name labels will also contain show the value (and measure unit)
 
+###showValuesOnTooltip
+default: true
+if true, dataset tooltips will also contain show the value (and measure unit)
+
 ###decimalValues
 default: 0
 decimal values to be showed in labels

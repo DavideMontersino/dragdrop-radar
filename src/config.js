@@ -13,6 +13,7 @@ var defaultConfig = {
 	showAxeLabels: true,
 	labelPosition: 'outer', // inner or outer
 	showValuesOnLabels: true,
+	showValuesOnTooltip: true,
 	measureUnit: "%", //measure unit to append to labels
 	decimalValues: 0, // decimal values to be showed in labels
 	editable: true,

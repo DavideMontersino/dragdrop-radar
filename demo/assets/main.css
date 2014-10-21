@@ -47,7 +47,7 @@ svg{
 	stroke-width:0;
 }
 
-text.axe-labels, text.data-labels{
+text.axe-labels, text.data-labels, text.tooltip{
 	font-size: 10px;
 	font-family: Helvetica, sans-serif;
 	fill: #888;
