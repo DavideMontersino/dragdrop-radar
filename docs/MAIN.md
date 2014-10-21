@@ -86,6 +86,10 @@ If false, drag and drop behaviour is disabled
 default: false
 If true, radar is zoomed-in to the max value found in dataset.
 
+###labelPosition
+default: outer
+Should the data labels be outside or inside the radar?
+
 #Events
 You can hook to the event 'change' of an instance of radar; the context in which the function will run is the context of the value that is changing
     

@@ -42,6 +42,11 @@ svg{
   	fill: rgba(0,0,0,0);
 }
 
+.radar-grid.external-circle{
+	fill:rgba(200,100,100,0.3);
+	stroke-width:0;
+}
+
 text.axe-labels, text.data-labels{
 	font-size: 10px;
 	font-family: Helvetica, sans-serif;

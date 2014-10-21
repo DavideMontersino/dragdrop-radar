@@ -16,11 +16,12 @@ var defaultConfig = {
 	axeLabelsSpace: 2, // the space between axes text and the concentric grid circles
 	equalize: true, //if true, changing one value will result in all other to decrease (and vice-versa), in order to mantain a constant sum
 	showAxeLabels: true,
+	labelPosition: 'outer', // inner or outer
 	showValuesOnLabels: true,
 	measureUnit: "%", //measure unit to append to labels
 	decimalValues: 0, // decimal values to be showed in labels
 	editable: true,
-	zoomOnMaxValue: true,
+	zoomOnMaxValue: false,
 	element: '.radar'
 };
 
@@ -110,12 +111,30 @@ dragdropRadar.prototype = {
 			.attr("class","data-labels");
 
 		dataLabels
-			.text(function(d){return d.name + (d.defaultConfig.showValuesOnLabels ? (" (" + d.value.toFixed($this.config.decimalValues) + $this.config.measureUnit + ")") : '');})
-			.attr("transform", function(d,i) {
-				var ret = $this.coordG($this.angleCalculator(i), $this.config.radarRadius - 100);
-				return "translate(" + ret.x + "," + ret.y + ") rotate(" + $this.angleCalculator(i)* (180/Math.PI) +")";
-		    })
-		    .attr("dy",-4);
+			.text(function(d){
+				return d.name + (d.defaultConfig.showValuesOnLabels ? (" (" + d.value.toFixed($this.config.decimalValues) + $this.config.measureUnit + ")") : '');
+			});
+		
+		if ($this.config.labelPosition === 'inner'){
+			dataLabels
+				.attr("transform", function(d,i) {
+					var ret = $this.coordG($this.angleCalculator(i), $this.config.radarRadius - 100);
+					return "translate(" + ret.x + "," + ret.y + ") rotate(" + $this.angleCalculator(i)* (180/Math.PI) +")";
+			    })
+			    .attr("dy",-4);
+		} else {
+			dataLabels
+				.attr("transform", function(d,i){
+					var ret = $this.coordG($this.angleCalculator(i), $this.config.radarRadius - 5);
+					return "translate(" + ret.x + "," + ret.y + ")";
+				})
+				.attr("text-anchor", function(d,i) {
+			        // are we past the center?
+			        return Math.cos($this.angleCalculator(i)) < 0 ?
+			            "end" : "start";
+			    });
+		}
+		
 	},
 	// Draw the concentric grid's labels
 	drawAxeLabels: function(){
@@ -150,7 +169,7 @@ dragdropRadar.prototype = {
 		concentricGrid
 			.enter()
 			.append("circle")
-			.attr("class", "radar-grid");
+			.attr("class", function(d){ return d === $this.config.domainRange[1] ? "radar-grid external-circle" : "radar-grid";});
 
 		concentricGrid
 			.attr("cx", $this.config.svgCenter.x)
