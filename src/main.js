@@ -10,73 +10,95 @@ var extend = function(dst, src){
 // Base function.
 function dragdropRadar(config) {
 	/*jshint validthis: true */
-	var $this = this;
 	//we extend default configuration with the one passed by callee
-	this.config = extend(defaultConfig, config);
-	this.data = config.data;
+	this._config = extend(defaultConfig, config);
+	this._data = config.data;
 
 	//We initialize dispatchers
 	this.dispatchOnChange = d3.dispatch("change");
-
-	this.config.svgCenter = {x:this.config.width/2, y:this.config.height/2}; //where should the center of our radar be?
 	
-	this.coordG = this.getPolarCoordGenerator(this.config.svgCenter);
-  
-	//radar Radius is half the minimum dimension of svg, less a margin which is due to the handles radius
-	this.config.radarRadius = (Math.min(this.config.height,this.config.width) / 2) - this.config.radarHandlersRadius;
-
-	this.angleCalculator = this.equalAngleCalculator(this.data.length, - Math.PI / 2);
-
-	
-	this.config.total = 0;
-	this.config.maxFoundValue = 0;
-	//add x,y coordinates to data: needed for d3's drag and drop
-	this.data.forEach(function(element, index, array){
-		array[index].i = index;
-		array[index].gridLine = {p0:{x:0,y:0},p1:{x:0,p:0}}; // we create a container to save the radar segment to be used as a constraint when dragdropping handlers
-		array[index].defaultConfig = $this.config;
-		$this.config.total += element.value;
-		if (element.value > $this.config.maxFoundValue){
-			$this.config.maxFoundValue = element.value;
-		}
-	});
-
-	this.config.maxValue = Math.max(this.config.maxValue, this.config.total);
-
-	this.config.domainRange = this.config.zoomOnMaxValue ? [0,$this.config.maxFoundValue] : [0, $this.config.maxValue];
-	//Main scale definition
-	this.scale= d3.scale.pow().exponent(1/$this.config.exponent)
-		.domain(this.config.domainRange) //the input range is between 0 and maxValue
-		.range([$this.config.minRadius,$this.config.radarRadius * (1 - $this.config.radarMargin)]); //the output range is between a minimum distance from the center (10) and radar radius
-
-	//We draw the svg container
-	this.svg = d3.select($this.config.element)
-		.append("svg")
-		.attr('width',$this.config.width)
-		.attr('height',$this.config.height);
-
-	//We draw the radar grid
-	this.drawRadarGrid();
-
-	//We draw the radar path
-	this.drawRadarPath();
-
-	//We draw the drag 'n drop handles
-	this.drawRadarHandlers();
-
+	this.redrawRadar();
 }
 dragdropRadar.prototype = {
 	/*jshint validthis: true */
 	VERSION: '0.0.0', // Version.
 
+	config:function(key, value){
+		if (arguments.length == 1){
+			return this._config[key];
+		}
+		this._config[key] = value;
+		return this;
+	},
+	data: function(data){
+		if (arguments.length === 0){
+			return this._data;
+		}
+		this._data = data;
+	},
 	change: function(name,func){
 		this.dispatchOnChange.on(name,func);
+	},
+	redrawRadar: function(){
+		var $this = this;
+
+		this._config.svgCenter = {x:this._config.width/2, y:this._config.height/2}; //where should the center of our radar be?
+
+		this.coordG = this.getPolarCoordGenerator(this._config.svgCenter);
+		 
+		//radar Radius is half the minimum dimension of svg, less a margin which is due to the handles radius
+		this._config.radarRadius = (Math.min(this._config.height,this._config.width) / 2) - this._config.radarHandlersRadius;
+
+		this.angleCalculator = this.equalAngleCalculator(this._data.length, - Math.PI / 2);
+
+		
+		this._config.total = 0;
+		this._config.maxFoundValue = 0;
+		//add x,y coordinates to data: needed for d3's drag and drop
+		this._data.forEach(function(element, index, array){
+			array[index].i = index;
+			array[index].gridLine = {p0:{x:0,y:0},p1:{x:0,p:0}}; // we create a container to save the radar segment to be used as a constraint when dragdropping handlers
+			array[index].defaultConfig = $this._config;
+			$this._config.total += element.value;
+			if (element.value > $this._config.maxFoundValue){
+				$this._config.maxFoundValue = element.value;
+			}
+		});
+
+		this._config.maxValue = Math.max(this._config.maxValue, this._config.total);
+
+		this._config.domainRange = this._config.zoomOnMaxValue ? [0,$this._config.maxFoundValue] : [0, $this._config.maxValue];
+		//Main scale definition
+		this.scale= d3.scale.pow().exponent(1/$this._config.exponent)
+			.domain(this._config.domainRange) //the input range is between 0 and maxValue
+			.range([$this._config.minRadius,$this._config.radarRadius * (1 - $this._config.radarMargin)]); //the output range is between a minimum distance from the center (10) and radar radius
+
+		//We draw the svg container
+		if (this.svg === undefined){
+			this.svg = d3.select($this._config.element)
+				.append("svg");
+		}
+		
+		this.svg
+			.attr('width',$this._config.width)
+			.attr('height',$this._config.height);
+
+		//We draw the radar grid
+		this.drawRadarGrid();
+
+		//We draw the radar path
+		this.drawRadarPath();
+
+		//We draw the drag 'n drop handles
+		this.drawRadarHandlers();
+
+		return this;
 	},
 	//Draws the radial data labels
 	drawDataLabels: function(){
 		var $this = this;
 		var dataLabels = this.svg.selectAll("text.data-labels")
-			.data($this.data);
+			.data($this._data);
 
 		dataLabels
 			.enter()
@@ -85,20 +107,20 @@ dragdropRadar.prototype = {
 
 		dataLabels
 			.text(function(d){
-				return d.name + (d.defaultConfig.showValuesOnLabels ? (" (" + d.value.toFixed($this.config.decimalValues) + $this.config.measureUnit + ")") : '');
+				return d.name + (d.defaultConfig.showValuesOnLabels ? (" (" + d.value.toFixed($this._config.decimalValues) + $this._config.measureUnit + ")") : '');
 			});
 		
-		if ($this.config.labelPosition === 'inner'){
+		if ($this._config.labelPosition === 'inner'){
 			dataLabels
 				.attr("transform", function(d,i) {
-					var ret = $this.coordG($this.angleCalculator(i), $this.config.radarRadius - 100);
+					var ret = $this.coordG($this.angleCalculator(i), $this._config.radarRadius - 100);
 					return "translate(" + ret.x + "," + ret.y + ") rotate(" + $this.angleCalculator(i)* (180/Math.PI) +")";
 			    })
 			    .attr("dy",-4);
 		} else {
 			dataLabels
 				.attr("transform", function(d,i){
-					var ret = $this.coordG($this.angleCalculator(i), $this.config.radarRadius - 5);
+					var ret = $this.coordG($this.angleCalculator(i), $this._config.radarRadius - 5);
 					return "translate(" + ret.x + "," + ret.y + ")";
 				})
 				.attr("text-anchor", function(d,i) {
@@ -121,9 +143,9 @@ dragdropRadar.prototype = {
 				.attr("class","axe-labels");
 
 			axeLabels
-				.text(function(d){return d.toFixed($this.config.decimalValues) + $this.config.measureUnit;})
-				.attr("x", $this.config.svgCenter.x)
-				.attr("y", function(d){return ($this.config.svgCenter.y - $this.scale(d) - $this.config.axeLabelsSpace);});
+				.text(function(d){return d.toFixed($this._config.decimalValues) + $this._config.measureUnit;})
+				.attr("x", $this._config.svgCenter.x)
+				.attr("y", function(d){return ($this._config.svgCenter.y - $this.scale(d) - $this._config.axeLabelsSpace);});
 	},
 	// Draws the radar grid
 	drawRadarGrid: function(){
@@ -131,54 +153,63 @@ dragdropRadar.prototype = {
 
 		$this.valueGrid = [];
 		//The concentric grid
-		if ($this.config.grid !== undefined && $this.config.grid > 0){
-			$this.valueGrid = d3.range(0,$this.config.domainRange[1],($this.config.domainRange[1] /$this.config.grid));
+		if ($this._config.grid !== undefined && $this._config.grid > 0){
+			$this.valueGrid = d3.range(0,$this._config.domainRange[1],($this._config.domainRange[1] /$this._config.grid));
 		}
 
-		$this.valueGrid.push($this.config.domainRange[1]);
+		$this.valueGrid.push($this._config.domainRange[1]);
 		var concentricGrid = this.svg.selectAll("circle.radar-grid")
 			.data($this.valueGrid);
 
 		concentricGrid
 			.enter()
 			.append("circle")
-			.attr("class", function(d){ return d === $this.config.domainRange[1] ? "radar-grid external-circle" : "radar-grid";});
+			.attr("class", function(d){ return d === $this._config.domainRange[1] ? "radar-grid external-circle" : "radar-grid";});
 
 		concentricGrid
-			.attr("cx", $this.config.svgCenter.x)
-			.attr("cy", $this.config.svgCenter.y)
+			.attr("cx", $this._config.svgCenter.x)
+			.attr("cy", $this._config.svgCenter.y)
 			.attr("r", function(d){ return $this.scale(d);});
 	
-		if (this.config.showAxeLabels){
+		concentricGrid
+			.exit()
+			.remove();
+
+		if (this._config.showAxeLabels){
 			this.drawAxeLabels();
 		}
 	
 		
 		// one line for each value
 		var lines = this.svg.selectAll("line")
-			.data($this.data)
+			.data($this._data);
+
+		lines
 			.enter()
 			.append("line")
 			.attr("class", "radar-grid");
 
 		lines
 			.attr("x1",function(d,i){
-				var ret = $this.coordG($this.angleCalculator(i), $this.config.minRadius);
+				var ret = $this.coordG($this.angleCalculator(i), $this._config.minRadius);
 				d.gridLine.p0.x = ret.x;
 				d.gridLine.p0.y = ret.y;
 				return ret.x;
 			}) // we also want to save the grid to the data as reference for d&d
-			.attr("y1",function(d,i){return $this.coordG($this.angleCalculator(i), $this.config.minRadius).y;})
+			.attr("y1",function(d,i){return $this.coordG($this.angleCalculator(i), $this._config.minRadius).y;})
 			.attr("x2",function(d,i){
 				var ret = $this.coordG($this.angleCalculator(i), d.defaultConfig.radarRadius);
 				d.gridLine.p1.x = ret.x;
 				d.gridLine.p1.y = ret.y;
 				// we do not want lines to get out of the radar
-				ret = $this.coordG($this.angleCalculator(i), $this.config.radarRadius * (1 - $this.config.radarMargin));
+				ret = $this.coordG($this.angleCalculator(i), $this._config.radarRadius * (1 - $this._config.radarMargin));
 				return ret.x;
 			})
-			.attr("y2",function(d,i){return $this.coordG($this.angleCalculator(i), $this.config.radarRadius * (1 - $this.config.radarMargin)).y;});
+			.attr("y2",function(d,i){return $this.coordG($this.angleCalculator(i), $this._config.radarRadius * (1 - $this._config.radarMargin)).y;});
 
+		lines
+			.exit()
+			.remove();
 		this.drawDataLabels();
 
 	},
@@ -187,10 +218,10 @@ dragdropRadar.prototype = {
 		var lineFunction = d3.svg.line()
 			.x(function(d,i) { return $this.coordG($this.angleCalculator(i), $this.scale(d.value)).x;})
 			.y(function(d,i) { return $this.coordG($this.angleCalculator(i), $this.scale(d.value)).y;})
-			.interpolate($this.config.radarPathInterpolation);
+			.interpolate($this._config.radarPathInterpolation);
 
 		var path = this.svg.selectAll("path")
-			.data([$this.data]);
+			.data([$this._data]);
 
 		path
 			.enter()
@@ -199,7 +230,7 @@ dragdropRadar.prototype = {
 			.attr("class", "radar-path");
 
 		path
-			.attr("d", lineFunction($this.data));
+			.attr("d", lineFunction($this._data));
 			
 	},
 	dragmove: function(d,$this) {
@@ -230,22 +261,22 @@ dragdropRadar.prototype = {
 		
 		var distanceFromMin = Math.sqrt(dist2(d.gridLine.p0, pointPosition));
 		
-		var positionToValueScale = d3.scale.pow().exponent($this.config.exponent)
-			.domain([0,$this.config.radarRadius * (1 - $this.config.radarMargin)]) //the input range is between 0 and radar radius
-			.range(this.config.domainRange); //the output range is between 0 and the max value of the data
+		var positionToValueScale = d3.scale.pow().exponent($this._config.exponent)
+			.domain([0,$this._config.radarRadius * (1 - $this._config.radarMargin)]) //the input range is between 0 and radar radius
+			.range(this._config.domainRange); //the output range is between 0 and the max value of the data
 		
 		var newVal = positionToValueScale(distanceFromMin);
 
-		newVal = Math.min(newVal, $this.config.domainRange[1]); // we do not want our values to be greater than max value, of course!
+		newVal = Math.min(newVal, $this._config.domainRange[1]); // we do not want our values to be greater than max value, of course!
 		
 		if (!isNaN(newVal)){
-			if ($this.config.equalize){
+			if ($this._config.equalize){
 			
 				var difference = d.value - newVal, // how much we have to redistribute to other values
 				toDistribute = difference / (d.defaultConfig.total - d.value);
 
 				var newTotal = 0;
-				$this.data.forEach(function(element,index){
+				$this._data.forEach(function(element,index){
 					if(d.i !== index){
 						element.value += toDistribute * element.value;
 					}
@@ -255,7 +286,7 @@ dragdropRadar.prototype = {
 				newTotal = newTotal - d.value + newVal;
 				
 				//are we drifting away from the starting total? let's correct it:
-				var error = newTotal - $this.config.total;
+				var error = newTotal - $this._config.total;
 				d.value = newVal - error;
 			} else {
 				d.value = newVal;
@@ -276,12 +307,12 @@ dragdropRadar.prototype = {
 	drawRadarHandlers: function(){
 		var $this = this;
 		var dataCircles = this.svg.selectAll("circle.radar-handlers")
-			.data($this.data);
+			.data($this._data);
 
 		dataCircles
 			.enter()
 			.append("circle")
-			.attr("r", $this.config.radarHandlersRadius)
+			.attr("r", $this._config.radarHandlersRadius)
 			.attr("class","radar-handlers");
 
 		
@@ -294,7 +325,7 @@ dragdropRadar.prototype = {
 			})
 			.attr("cy",function(d,i){return $this.coordG($this.angleCalculator(i), $this.scale(d.value)).y;});
 
-		if (this.config.editable){
+		if (this._config.editable){
 			var drag = d3.behavior.drag()
 			    .origin(function(d) { return d; })
 			    .on("drag", function(d) {$this.dragmove(d,$this);});
@@ -313,7 +344,7 @@ dragdropRadar.prototype = {
 		});
 
 		var tooltip = this.svg.selectAll("text.radar-tooltip")
-			.data($this.data);
+			.data($this._data);
 
 		tooltip.enter()
 			.append("text")
@@ -321,7 +352,7 @@ dragdropRadar.prototype = {
 
 		tooltip
 			.text(function(d){
-				return d.name + (d.defaultConfig.showValuesOnTooltip ? (" (" + d.value.toFixed($this.config.decimalValues) + $this.config.measureUnit + ")") : '');
+				return d.name + (d.defaultConfig.showValuesOnTooltip ? (" (" + d.value.toFixed($this._config.decimalValues) + $this._config.measureUnit + ")") : '');
 			})
 			.attr("x", function(d,i){return $this.coordG($this.angleCalculator(i), $this.scale(d.value) + 5).x;})
 			.attr("y", function(d,i){return $this.coordG($this.angleCalculator(i), $this.scale(d.value) + 5).y;})
@@ -331,7 +362,6 @@ dragdropRadar.prototype = {
 		            "end" : "start";
 		    })
 			.style("visibility", function(d,i){
-				console.log({i:i, currentDataOver:$this.currentDataOver});
 				if(d.tooltip === "visible"){
 					return "visible";
 				}
