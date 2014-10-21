@@ -1,6 +1,6 @@
 var defaultConfig = {
-	width: '100px',
-	height: '100px',
+	width: '600',
+	height: '400',
 	radarHandlersRadius: 5, // the radius of the circles used to drag the values
 	minRadius: 20, // the minimum radius from which the radar starts
 	radarPathInterpolation: "linear-closed",
