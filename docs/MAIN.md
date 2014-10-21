@@ -68,7 +68,11 @@ default: true
 
 ###measureunit
 default: "%"
-measure unit to append to labels
+measure unit to append to labels.
+
+##showValuesOnLabels
+default: true
+if true, dataset name labels will also contain show the value (and measure unit)
 
 ###decimalValues
 default: 0
