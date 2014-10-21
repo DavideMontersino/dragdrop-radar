@@ -255,10 +255,7 @@ dragdropRadar.prototype = {
 			.attr("r", $this.config.radarHandlersRadius)
 			.attr("class","radar-handlers");
 
-		var drag = d3.behavior.drag()
-		    .origin(function(d) { return d; })
-		    .on("drag", function(d) {$this.dragmove(d,$this);});
-
+		
 		dataCircles
 			.attr("cx",function(d,i){
 				var ret = $this.coordG($this.angleCalculator(i), $this.scale(d.value));
@@ -266,10 +263,16 @@ dragdropRadar.prototype = {
 				d.y = ret.y;
 				return ret.x;
 			})
-			.attr("cy",function(d,i){return $this.coordG($this.angleCalculator(i), $this.scale(d.value)).y;})
-			.call(drag);
+			.attr("cy",function(d,i){return $this.coordG($this.angleCalculator(i), $this.scale(d.value)).y;});
 
-		
+		if (this.config.editable){
+			var drag = d3.behavior.drag()
+			    .origin(function(d) { return d; })
+			    .on("drag", function(d) {$this.dragmove(d,$this);});
+
+			dataCircles
+				.call(drag);
+		}
 	},
 	equalAngleCalculator: function(divider, angleOffset){
 		return function(i){

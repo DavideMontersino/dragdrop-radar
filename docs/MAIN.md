@@ -74,6 +74,10 @@ measure unit to append to labels
 default: 0
 decimal values to be showed in labels
 
+###editable
+default: true
+If false, drag and drop behaviour is disabled
+
 #Events
 You can hook to the event 'change' of an instance of radar; the context in which the function will run is the context of the value that is changing
     

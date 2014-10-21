@@ -13,5 +13,6 @@ var defaultConfig = {
 	showAxeLabels: true,
 	measureUnit: "%", //measure unit to append to labels
 	decimalValues: 0, // decimal values to be showed in labels
+	editable: true,
 	element: '.radar'
 };
