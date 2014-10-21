@@ -1,14 +1,10 @@
 # dragdrop-radar
 
-Everything still needs to be done
-
-A radar graph widget that can be used to input values too.
-
-## About
-
-A JavaScript library by Davide Orazio Montersino.
+A reusable, css customizable d3 radar graph widget that can be used to input values too.
 
 See the [project homepage](http://DavideMontersino.github.io/dragdrop-radar).
+
+Also, you can play with it on [JsFiddle](http://jsfiddle.net/oraxxio/8r86fyru/1/)
 
 ## Installation
 
@@ -43,7 +39,7 @@ Start with `docs/MAIN.md`.
 
 We'll check out your contribution if you:
 
-* Provide a comprehensive suite of tests for your fork.
+* Provide a comprehensive suite of tests for your fork. (ehm, I did not write any test)
 * Have a clear and documented rationale for your changes.
 * Package these up in a pull request.
 
