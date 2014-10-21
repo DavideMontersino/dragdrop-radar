@@ -86,40 +86,47 @@ dragdropRadar.prototype = {
 		    })
 		    .attr("dy",-4);
 	},
+	// Draw the concentric grid's labels
+	drawAxeLabels: function(){
+			var $this = this;
+			var axeLabels = this.svg.selectAll("text.axe-labels")
+				.data($this.valueGrid);
 
+			axeLabels
+				.enter()
+				.append("text")
+				.attr("class","axe-labels");
+
+			axeLabels
+				.text(function(d){return d + "%";})
+				.attr("x", $this.config.svgCenter.x)
+				.attr("y", function(d){return ($this.config.svgCenter.y - $this.scale(d) - $this.config.axeLabelsSpace);});
+	},
 	// Draws the radar grid
-	drawRadarGrid: function( ){
+	drawRadarGrid: function(){
 		var $this = this;
-		$this.valueGrid = d3.range(0,$this.config.maxValue,defaultConfig.grid);
 
 		//The concentric grid
-		var concentricGrid = this.svg.selectAll("circle.radar-grid")
-			.data($this.valueGrid);
+		if ($this.config.grid !== undefined && $this.config.grid > 0){
+			$this.valueGrid = d3.range(0,$this.config.maxValue,$this.config.grid);
+			var concentricGrid = this.svg.selectAll("circle.radar-grid")
+				.data($this.valueGrid);
 
-		concentricGrid
-			.enter()
-			.append("circle")
-			.attr("class", "radar-grid");
+			concentricGrid
+				.enter()
+				.append("circle")
+				.attr("class", "radar-grid");
 
-		concentricGrid
-			.attr("cx", $this.config.svgCenter.x)
-			.attr("cy", $this.config.svgCenter.y)
-			.attr("r", function(d){ return $this.scale(d);});
-
-		//The concentric grid's labels
-		var axeLabels = this.svg.selectAll("text.axe-labels")
-			.data($this.valueGrid);
-
-		axeLabels
-			.enter()
-			.append("text")
-			.attr("class","axe-labels");
-
-		axeLabels
-			.text(function(d){return d + "%";})
-			.attr("x", $this.config.svgCenter.x)
-			.attr("y", function(d){return ($this.config.svgCenter.y - $this.scale(d) - $this.config.axeLabelsSpace);});
-
+			concentricGrid
+				.attr("cx", $this.config.svgCenter.x)
+				.attr("cy", $this.config.svgCenter.y)
+				.attr("r", function(d){ return $this.scale(d);});
+		
+			if (this.config.showAxeLabels){
+				this.drawAxeLabels();
+			}
+		}
+		
 		// one line for each value
 		var lines = this.svg.selectAll("line")
 			.data($this.data)

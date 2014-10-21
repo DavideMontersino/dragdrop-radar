@@ -15,6 +15,7 @@ var defaultConfig = {
 	grid: 10, //in how many sectors should grid be divided
 	axeLabelsSpace: 2, // the space between axes text and the concentric grid circles
 	equalize: true, //if true, changing one value will result in all other to decrease (and vice-versa), in order to mantain a constant sum
+	showAxeLabels: true,
 	element: '.radar'
 };
 
@@ -106,40 +107,47 @@ dragdropRadar.prototype = {
 		    })
 		    .attr("dy",-4);
 	},
+	// Draw the concentric grid's labels
+	drawAxeLabels: function(){
+			var $this = this;
+			var axeLabels = this.svg.selectAll("text.axe-labels")
+				.data($this.valueGrid);
 
+			axeLabels
+				.enter()
+				.append("text")
+				.attr("class","axe-labels");
+
+			axeLabels
+				.text(function(d){return d + "%";})
+				.attr("x", $this.config.svgCenter.x)
+				.attr("y", function(d){return ($this.config.svgCenter.y - $this.scale(d) - $this.config.axeLabelsSpace);});
+	},
 	// Draws the radar grid
-	drawRadarGrid: function( ){
+	drawRadarGrid: function(){
 		var $this = this;
-		$this.valueGrid = d3.range(0,$this.config.maxValue,defaultConfig.grid);
 
 		//The concentric grid
-		var concentricGrid = this.svg.selectAll("circle.radar-grid")
-			.data($this.valueGrid);
+		if ($this.config.grid !== undefined && $this.config.grid > 0){
+			$this.valueGrid = d3.range(0,$this.config.maxValue,$this.config.grid);
+			var concentricGrid = this.svg.selectAll("circle.radar-grid")
+				.data($this.valueGrid);
 
-		concentricGrid
-			.enter()
-			.append("circle")
-			.attr("class", "radar-grid");
+			concentricGrid
+				.enter()
+				.append("circle")
+				.attr("class", "radar-grid");
 
-		concentricGrid
-			.attr("cx", $this.config.svgCenter.x)
-			.attr("cy", $this.config.svgCenter.y)
-			.attr("r", function(d){ return $this.scale(d);});
-
-		//The concentric grid's labels
-		var axeLabels = this.svg.selectAll("text.axe-labels")
-			.data($this.valueGrid);
-
-		axeLabels
-			.enter()
-			.append("text")
-			.attr("class","axe-labels");
-
-		axeLabels
-			.text(function(d){return d + "%";})
-			.attr("x", $this.config.svgCenter.x)
-			.attr("y", function(d){return ($this.config.svgCenter.y - $this.scale(d) - $this.config.axeLabelsSpace);});
-
+			concentricGrid
+				.attr("cx", $this.config.svgCenter.x)
+				.attr("cy", $this.config.svgCenter.y)
+				.attr("r", function(d){ return $this.scale(d);});
+		
+			if (this.config.showAxeLabels){
+				this.drawAxeLabels();
+			}
+		}
+		
 		// one line for each value
 		var lines = this.svg.selectAll("line")
 			.data($this.data)
