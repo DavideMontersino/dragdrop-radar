@@ -340,12 +340,12 @@ dragdropRadar.prototype = {
 			$this.drawRadarHandlers();
 		});
 
-		var tooltip = this.svg.selectAll("text.tooltip")
+		var tooltip = this.svg.selectAll("text.radar-tooltip")
 			.data($this.data);
 
 		tooltip.enter()
 			.append("text")
-			.attr("class", "tooltip");
+			.attr("class", "radar-tooltip");
 
 		tooltip
 			.text(function(d){
