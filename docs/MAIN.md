@@ -63,6 +63,16 @@ if true, changing one value will result in all other to decrease (and vice-versa
 default: .radar
 The element that will containt the radar's svg
 
+###showAxeLabels
+default: true
+
+###measureunit
+default: "%"
+measure unit to append to labels
+
+###decimalValues
+default: 0
+decimal values to be showed in labels
 
 #Events
 You can hook to the event 'change' of an instance of radar; the context in which the function will run is the context of the value that is changing
