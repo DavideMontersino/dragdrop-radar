@@ -78,6 +78,10 @@ decimal values to be showed in labels
 default: true
 If false, drag and drop behaviour is disabled
 
+###zoomOnMaxValue
+default: false
+If true, radar is zoomed-in to the max value found in dataset.
+
 #Events
 You can hook to the event 'change' of an instance of radar; the context in which the function will run is the context of the value that is changing
     

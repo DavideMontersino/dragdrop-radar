@@ -14,5 +14,6 @@ var defaultConfig = {
 	measureUnit: "%", //measure unit to append to labels
 	decimalValues: 0, // decimal values to be showed in labels
 	editable: true,
+	zoomOnMaxValue: false,
 	element: '.radar'
 };

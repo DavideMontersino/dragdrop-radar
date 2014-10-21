@@ -29,19 +29,24 @@ function dragdropRadar(config) {
 
 	
 	this.config.total = 0;
+	this.config.maxFoundValue = 0;
 	//add x,y coordinates to data: needed for d3's drag and drop
 	this.data.forEach(function(element, index, array){
 		array[index].i = index;
 		array[index].gridLine = {p0:{x:0,y:0},p1:{x:0,p:0}}; // we create a container to save the radar segment to be used as a constraint when dragdropping handlers
 		array[index].defaultConfig = $this.config;
 		$this.config.total += element.value;
+		if (element.value > $this.config.maxFoundValue){
+			$this.config.maxFoundValue = element.value;
+		}
 	});
 
 	this.config.maxValue = Math.max(this.config.maxValue, this.config.total);
 
+	this.config.domainRange = this.config.zoomOnMaxValue ? [0,$this.config.maxFoundValue] : [0, $this.config.maxValue];
 	//Main scale definition
 	this.scale= d3.scale.pow().exponent(1/$this.config.exponent)
-		.domain([0, $this.config.maxValue]) //the input range is between 0 and the max value found in data
+		.domain(this.config.domainRange) //the input range is between 0 and maxValue
 		.range([$this.config.minRadius,$this.config.radarRadius * (1 - $this.config.radarMargin)]); //the output range is between a minimum distance from the center (10) and radar radius
 
 	//We draw the svg container
@@ -108,7 +113,7 @@ dragdropRadar.prototype = {
 
 		//The concentric grid
 		if ($this.config.grid !== undefined && $this.config.grid > 0){
-			$this.valueGrid = d3.range(0,$this.config.maxValue,($this.config.total /$this.config.grid));
+			$this.valueGrid = d3.range(0,$this.config.domainRange[1],($this.config.domainRange[1] /$this.config.grid));
 			var concentricGrid = this.svg.selectAll("circle.radar-grid")
 				.data($this.valueGrid);
 
@@ -203,11 +208,11 @@ dragdropRadar.prototype = {
 		
 		var positionToValueScale = d3.scale.pow().exponent($this.config.exponent)
 			.domain([0,$this.config.radarRadius * (1 - $this.config.radarMargin)]) //the input range is between 0 and radar radius
-			.range([0, d.defaultConfig.maxValue ]); //the output range is between 0 and the max value of the data
+			.range(this.config.domainRange); //the output range is between 0 and the max value of the data
 		
 		var newVal = positionToValueScale(distanceFromMin);
 
-		newVal = Math.min(newVal, $this.config.maxValue); // we do not want our values to be greater than max value, of course!
+		newVal = Math.min(newVal, $this.config.domainRange[1]); // we do not want our values to be greater than max value, of course!
 		
 		if (!isNaN(newVal)){
 			if ($this.config.equalize){
