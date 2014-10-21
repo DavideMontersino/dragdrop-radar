@@ -16,7 +16,7 @@ var defaultConfig = {
 	axeLabelsSpace: 2, // the space between axes text and the concentric grid circles
 	equalize: true, //if true, changing one value will result in all other to decrease (and vice-versa), in order to mantain a constant sum
 	showAxeLabels: true,
-	measureunit: "%", //measure unit to append to labels
+	measureUnit: "%", //measure unit to append to labels
 	decimalValues: 0, // decimal values to be showed in labels
 	element: '.radar'
 };
@@ -102,7 +102,7 @@ dragdropRadar.prototype = {
 			.attr("class","data-labels");
 
 		dataLabels
-			.text(function(d){return d.name + " (" + d.value.toFixed(0) + $this.config.measureunit + ")";})
+			.text(function(d){return d.name + " (" + d.value.toFixed($this.config.decimalValues) + $this.config.measureUnit + ")";})
 			.attr("transform", function(d,i) {
 				var ret = $this.coordG($this.angleCalculator(i), $this.config.radarRadius - 100);
 				return "translate(" + ret.x + "," + ret.y + ") rotate(" + $this.angleCalculator(i)* (180/Math.PI) +")";
@@ -121,7 +121,7 @@ dragdropRadar.prototype = {
 				.attr("class","axe-labels");
 
 			axeLabels
-				.text(function(d){return d.toFixed(0) + $this.config.measureunit;})
+				.text(function(d){return d.toFixed($this.config.decimalValues) + $this.config.measureUnit;})
 				.attr("x", $this.config.svgCenter.x)
 				.attr("y", function(d){return ($this.config.svgCenter.y - $this.scale(d) - $this.config.axeLabelsSpace);});
 	},

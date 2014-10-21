@@ -79,7 +79,7 @@ dragdropRadar.prototype = {
 			.attr("class","data-labels");
 
 		dataLabels
-			.text(function(d){return d.name + " (" + d.value.toFixed(0) + $this.config.measureunit + ")";})
+			.text(function(d){return d.name + " (" + d.value.toFixed($this.config.decimalValues) + $this.config.measureUnit + ")";})
 			.attr("transform", function(d,i) {
 				var ret = $this.coordG($this.angleCalculator(i), $this.config.radarRadius - 100);
 				return "translate(" + ret.x + "," + ret.y + ") rotate(" + $this.angleCalculator(i)* (180/Math.PI) +")";
@@ -98,7 +98,7 @@ dragdropRadar.prototype = {
 				.attr("class","axe-labels");
 
 			axeLabels
-				.text(function(d){return d.toFixed(0) + $this.config.measureunit;})
+				.text(function(d){return d.toFixed($this.config.decimalValues) + $this.config.measureUnit;})
 				.attr("x", $this.config.svgCenter.x)
 				.attr("y", function(d){return ($this.config.svgCenter.y - $this.scale(d) - $this.config.axeLabelsSpace);});
 	},
