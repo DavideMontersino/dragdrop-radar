@@ -19,7 +19,7 @@ var defaultConfig = {
 	measureUnit: "%", //measure unit to append to labels
 	decimalValues: 0, // decimal values to be showed in labels
 	editable: true,
-	zoomOnMaxValue: false,
+	zoomOnMaxValue: true,
 	element: '.radar'
 };
 
@@ -136,26 +136,30 @@ dragdropRadar.prototype = {
 	drawRadarGrid: function(){
 		var $this = this;
 
+		$this.valueGrid = [];
 		//The concentric grid
 		if ($this.config.grid !== undefined && $this.config.grid > 0){
 			$this.valueGrid = d3.range(0,$this.config.domainRange[1],($this.config.domainRange[1] /$this.config.grid));
-			var concentricGrid = this.svg.selectAll("circle.radar-grid")
-				.data($this.valueGrid);
-
-			concentricGrid
-				.enter()
-				.append("circle")
-				.attr("class", "radar-grid");
-
-			concentricGrid
-				.attr("cx", $this.config.svgCenter.x)
-				.attr("cy", $this.config.svgCenter.y)
-				.attr("r", function(d){ return $this.scale(d);});
-		
-			if (this.config.showAxeLabels){
-				this.drawAxeLabels();
-			}
 		}
+
+		$this.valueGrid.push($this.config.domainRange[1]);
+		var concentricGrid = this.svg.selectAll("circle.radar-grid")
+			.data($this.valueGrid);
+
+		concentricGrid
+			.enter()
+			.append("circle")
+			.attr("class", "radar-grid");
+
+		concentricGrid
+			.attr("cx", $this.config.svgCenter.x)
+			.attr("cy", $this.config.svgCenter.y)
+			.attr("r", function(d){ return $this.scale(d);});
+	
+		if (this.config.showAxeLabels){
+			this.drawAxeLabels();
+		}
+	
 		
 		// one line for each value
 		var lines = this.svg.selectAll("line")
@@ -176,9 +180,11 @@ dragdropRadar.prototype = {
 				var ret = $this.coordG($this.angleCalculator(i), d.defaultConfig.radarRadius);
 				d.gridLine.p1.x = ret.x;
 				d.gridLine.p1.y = ret.y;
+				// we do not want lines to get out of the radar
+				ret = $this.coordG($this.angleCalculator(i), $this.config.radarRadius * (1 - $this.config.radarMargin));
 				return ret.x;
 			})
-			.attr("y2",function(d,i){return $this.coordG($this.angleCalculator(i), d.defaultConfig.radarRadius).y;});
+			.attr("y2",function(d,i){return $this.coordG($this.angleCalculator(i), $this.config.radarRadius * (1 - $this.config.radarMargin)).y;});
 
 		this.drawDataLabels();
 
