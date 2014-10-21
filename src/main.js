@@ -209,8 +209,9 @@ dragdropRadar.prototype = {
 
 		newVal = Math.min(newVal, $this.config.maxValue); // we do not want our values to be greater than max value, of course!
 		
-		if ($this.config.equalize){
-			if (!isNaN(newVal)){
+		if (!isNaN(newVal)){
+			if ($this.config.equalize){
+			
 				var difference = d.value - newVal, // how much we have to redistribute to other values
 				toDistribute = difference / (d.defaultConfig.total - d.value);
 
@@ -227,9 +228,9 @@ dragdropRadar.prototype = {
 				//are we drifting away from the starting total? let's correct it:
 				var error = newTotal - $this.config.total;
 				d.value = newVal - error;
+			} else {
+				d.value = newVal;
 			}
-		} else {
-			d.value = newVal;
 		}
 		
 		$this.dispatchOnChange.change.apply(d);
