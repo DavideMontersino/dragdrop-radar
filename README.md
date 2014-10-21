@@ -1,7 +1,5 @@
 # dragdrop-radar
 
-*this is in early Alpha stage!*
-
 Everything still needs to be done
 
 A radar graph widget that can be used to input values too.
