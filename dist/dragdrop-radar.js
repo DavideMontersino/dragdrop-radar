@@ -19,6 +19,7 @@ var defaultConfig = {
 	labelPosition: 'outer', // inner or outer
 	showValuesOnLabels: true,
 	showValuesOnTooltip: true,
+	showToolTip: true,
 	measureUnit: "%", //measure unit to append to labels
 	decimalValues: 0, // decimal values to be showed in labels
 	editable: true,
@@ -361,11 +362,12 @@ dragdropRadar.prototype = {
 			dataCircles
 				.call(drag);
 		}
-
-		dataCircles.on("mouseover", function(d){
-			d.tooltip = 'visible';
-			$this.drawRadarHandlers();
-		});
+		if ($this._config.showToolTip === true){
+			dataCircles.on("mouseover", function(d){
+				d.tooltip = 'visible';
+				$this.drawRadarHandlers();
+			});
+		}
 		dataCircles.on("mouseout", function(d){
 			d.tooltip = 'none';
 			$this.drawRadarHandlers();

@@ -333,11 +333,12 @@ dragdropRadar.prototype = {
 			dataCircles
 				.call(drag);
 		}
-
-		dataCircles.on("mouseover", function(d){
-			d.tooltip = 'visible';
-			$this.drawRadarHandlers();
-		});
+		if ($this._config.showToolTip === true){
+			dataCircles.on("mouseover", function(d){
+				d.tooltip = 'visible';
+				$this.drawRadarHandlers();
+			});
+		}
 		dataCircles.on("mouseout", function(d){
 			d.tooltip = 'none';
 			$this.drawRadarHandlers();

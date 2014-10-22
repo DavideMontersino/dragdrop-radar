@@ -14,6 +14,7 @@ var defaultConfig = {
 	labelPosition: 'outer', // inner or outer
 	showValuesOnLabels: true,
 	showValuesOnTooltip: true,
+	showToolTip: true,
 	measureUnit: "%", //measure unit to append to labels
 	decimalValues: 0, // decimal values to be showed in labels
 	editable: true,

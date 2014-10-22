@@ -78,6 +78,10 @@ if true, dataset name labels will also contain show the value (and measure unit)
 default: true
 if true, dataset tooltips will also contain show the value (and measure unit)
 
+###showToolTip
+default: true
+if false, disables tooltips on handler's mouse over
+
 ###decimalValues
 default: 0
 decimal values to be showed in labels
