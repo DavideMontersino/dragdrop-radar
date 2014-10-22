@@ -362,7 +362,7 @@ dragdropRadar.prototype = {
 		        return Math.cos($this.angleCalculator(i)) < 0 ?
 		            "end" : "start";
 		    })
-			.style("visibility", function(d,i){
+			.style("visibility", function(d){
 				if(d.tooltip === "visible"){
 					return "visible";
 				}
