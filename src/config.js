@@ -11,7 +11,7 @@ var defaultConfig = {
 	axeLabelsSpace: 2, // the space between axes text and the concentric grid circles
 	equalize: true, //if true, changing one value will result in all other to decrease (and vice-versa), in order to mantain a constant sum
 	showAxeLabels: true,
-	labelPosition: 'outer', // inner or outer
+	labelPosition: 'outer', // inner, outer or none
 	showValuesOnLabels: true,
 	showValuesOnTooltip: true,
 	showToolTip: true,

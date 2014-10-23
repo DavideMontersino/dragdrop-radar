@@ -96,7 +96,8 @@ If true, radar is zoomed-in to the max value found in dataset.
 
 ###labelPosition
 default: outer
-Should the data labels be outside or inside the radar?
+Should the data labels be outside or inside the radar? Or shouldn't we draw it?
+possible options: inner, outer, none
 
 #Events
 You can hook to the event 'change' of an instance of radar; the context in which the function will run is the context of the value that is changing

@@ -16,7 +16,7 @@ var defaultConfig = {
 	axeLabelsSpace: 2, // the space between axes text and the concentric grid circles
 	equalize: true, //if true, changing one value will result in all other to decrease (and vice-versa), in order to mantain a constant sum
 	showAxeLabels: true,
-	labelPosition: 'outer', // inner or outer
+	labelPosition: 'outer', // inner, outer or none
 	showValuesOnLabels: true,
 	showValuesOnTooltip: true,
 	showToolTip: true,
@@ -126,6 +126,11 @@ dragdropRadar.prototype = {
 	//Draws the radial data labels
 	drawDataLabels: function(){
 		var $this = this;
+
+		if ($this._config.labelPosition === 'none'){
+			return;
+		}
+		
 		var dataLabels = this.svg.selectAll("text.data-labels")
 			.data($this._data);
 
@@ -146,7 +151,7 @@ dragdropRadar.prototype = {
 					return "translate(" + ret.x + "," + ret.y + ") rotate(" + $this.angleCalculator(i)* (180/Math.PI) +")";
 			    })
 			    .attr("dy",-4);
-		} else {
+		} else if ($this._config.labelPosition === 'outer'){
 			dataLabels
 				.attr("transform", function(d,i){
 					var ret = $this.coordG($this.angleCalculator(i), $this._config.radarRadius - 5);
