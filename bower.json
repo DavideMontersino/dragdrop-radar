@@ -1,7 +1,7 @@
 {
   "name": "dragdrop-radar",
-  "version": "v0.0.2",
-  "main": "dist/dragdrop-radar.min.js",
+  "version": "v0.0.3",
+  "main": "dist/dragdrop-radar.js",
   "ignore": [
     "**/.*",
     "node_modules",
