@@ -1,6 +1,6 @@
 {
   "name": "dragdrop-radar",
-  "version": "v0.0.3",
+  "version": "v0.0.5",
   "main": "dist/dragdrop-radar.js",
   "ignore": [
     "**/.*",
@@ -9,6 +9,6 @@
     "test"
   ],
   "dependencies": {
-    "d3": "~3.4.12"
+    "d3": "~3.5.6"
   }
 }
